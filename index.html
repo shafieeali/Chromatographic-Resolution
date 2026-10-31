@@ -2,174 +2,119 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chromatographic resolution: separating two peaks</title>
-<style>
-:root{--ink:#1f2d3a;--navy:#163e63;--steel:#326b9e;--muted:#566676;--rule:#cfdbe6;--panel:#f1f5f9;--bg:#ffffff;--grid:#e6edf3;
---a:#16876c;--b:#7a4fc4;--good:#2f7d4f;--warn:#9a5f12;--alert:#b23a48;--sta:#d9822b;--film:rgba(217,130,43,.30);--support:#c9d1da;--partEdge:#a9b6c4;
---fE:#1f6fb0;--fS:#7a4fc4;--fK:#b8601a;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--ink:#e3eaf1;--navy:#a9cdf0;--steel:#7fb0dc;--muted:#9fb0c0;--rule:#34475a;--panel:#17232f;--bg:#0f1820;--grid:#1f2e3b;
---a:#4fd1b0;--b:#b99cf5;--good:#74cf98;--warn:#e7b066;--alert:#f0828f;--sta:#f0a85a;--film:rgba(240,168,90,.26);--support:#2a3947;--partEdge:#5b6e82;
---fE:#7fb6ee;--fS:#b99cf5;--fK:#eba45f;color-scheme:dark}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Arial,Helvetica,sans-serif}
-main{max-width:1180px;margin:0 auto;padding:22px 18px 40px}
-h1{font-size:1.6rem;color:var(--navy);margin:0 0 6px}
-h2{font-size:1.15rem;color:var(--navy);margin:34px 0 6px;padding-top:16px;border-top:2px solid var(--rule)}
-.lede{margin:0 0 10px;max-width:80ch}
-.eq{font-size:1.2rem;margin:10px 0 2px;color:var(--navy);font-family:"Times New Roman",Times,serif}
-.eqnum{margin:0 0 12px;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.95rem}
-.eqnum b{color:var(--ink)}
-.controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:10px 0}
-.group{display:flex;flex-wrap:wrap;gap:6px}
-button{font:inherit;font-size:.9rem;padding:5px 11px;border:1px solid var(--steel);border-radius:4px;background:transparent;color:var(--navy);cursor:pointer}
-button:hover{background:var(--panel)}
-button:disabled{opacity:.45;cursor:default}
-button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:var(--bg)}
-:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
-.types button{font-size:1rem;padding:7px 14px}
-.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:8px}
-@media (max-width:880px){.hero{grid-template-columns:minmax(0,1fr)}}
-.view{position:relative;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,var(--panel),var(--bg) 75%)}
-#c3{display:block;width:100%;height:380px;touch-action:pan-y;cursor:grab}
-@media (max-width:600px){#c3{height:290px}}
-#c3:active{cursor:grabbing}
-.ovl{position:absolute;font-size:.8rem;color:var(--muted);pointer-events:none}
-.ovl.tl{left:10px;top:8px;max-width:75%}
-.ovl.tr{right:10px;top:8px;font-variant-numeric:tabular-nums;color:var(--ink);font-size:.85rem}
-.ovl.br{right:8px;bottom:8px;pointer-events:auto;display:flex;gap:6px}
-.ovl.br button{background:var(--bg);font-size:.82rem;padding:3px 9px}
-.legend3{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.84rem;color:var(--muted);margin:6px 2px 0}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
-.fallback{padding:40px 20px;text-align:center;color:var(--muted)}
-figcaption{font-size:.86rem;color:var(--muted);margin:4px 2px 0}
-.bigR{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:0 0 2px}
-.bigR .r{font-size:1.9rem;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
-.bigR .st{font-size:1.05rem;font-weight:700}
-.bigR .s{font-size:.88rem;color:var(--muted)}
-svg{display:block;width:100%;height:auto}
-.ax{stroke:var(--muted);stroke-width:1}
-.gl{stroke:var(--grid);stroke-width:1}
-.tk{fill:var(--muted);font-size:12px}
-.axt{fill:var(--ink);font-size:13px}
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1820" media="(prefers-color-scheme: dark)">
+<title>Chromatographic resolution explorer</title>
+<style>:root{--ink:#1f2d3a;--navy:#163e63;--steel:#326b9e;--muted:#566676;--rule:#cfdbe6;--panel:#f1f5f9;--bg:#ffffff;--grid:#e6edf3;--eqr:#c62828;--good:#2f7d4f;--warn:#9a5f12;--alert:#b23a48;--sta:#d9822b;--film:rgba(217,130,43,.22);--support:#c9d1da;--partEdge:#a9b6c4;
+--c0:#1f6fb0;--c1:#9a7b00;--c2:#22806b;--c3:#7a4fc4;--c4:#b8601a;--c5:#8a5a44;--c6:#c2185b;--c7:#0f8fa8;--c8:#556b2f;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--ink:#e3eaf1;--navy:#a9cdf0;--steel:#7fb0dc;--muted:#9fb0c0;--rule:#34475a;--panel:#17232f;--bg:#0f1820;--grid:#1f2e3b;--eqr:#ff8a80;--good:#74cf98;--warn:#e7b066;--alert:#f0828f;--sta:#f0a85a;--film:rgba(240,168,90,.18);--support:#2a3947;--partEdge:#5b6e82;
+--c0:#7fb6ee;--c1:#e0c25a;--c2:#5cc4a8;--c3:#b99cf5;--c4:#eba45f;--c5:#d1a58f;--c6:#f48fb1;--c7:#5fd0e6;--c8:#b5cf7a;color-scheme:dark}}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Arial,Helvetica,sans-serif;overflow:hidden;-webkit-text-size-adjust:100%}
+button,select,input{font:inherit}:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+header{display:flex;flex-wrap:wrap;row-gap:0;align-items:center;gap:8px;padding:6px 10px 7px;border-bottom:1px solid var(--rule);flex:0 0 auto}
+header .hrow{display:flex;align-items:center;gap:8px;width:100%}
+header .brand{flex:0 0 100%;font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
+header h1{flex:1 1 auto;min-width:0;font-size:1.02rem;margin:0;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:480px){header h1 .long{display:none}}
+header select.bigsel{border:1.5px solid var(--steel);border-radius:8px;background:var(--bg);color:var(--navy);padding:7px 8px;max-width:calc(100vw - 180px);font-size:.95rem;font-weight:700}
+@media (min-width:700px){header select.bigsel{min-width:240px;font-size:1.05rem;padding:8px 14px}}
+.btn{border:1px solid var(--steel);border-radius:6px;background:transparent;color:var(--navy);padding:5px 10px;cursor:pointer;font-size:.88rem}
+.btn:hover{background:var(--panel)}.btn[aria-pressed=true]{background:var(--navy);color:var(--bg);border-color:var(--navy)}
+.main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.left{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.right{flex:0 0 auto;height:42%;min-height:190px;display:flex;flex-direction:column;border-top:1px solid var(--rule);background:var(--bg)}
+@media (max-height:700px){.right{height:40%}}
+@media (min-width:900px),(orientation:landscape) and (max-height:600px){.main{flex-direction:row}.right{height:auto;width:min(390px,40%);border-top:0;border-left:1px solid var(--rule)}}
+.right.collapsed{height:auto;min-height:0}.right.collapsed .pbody{display:none}.right.all #ptabs{display:none}
+.live{padding:6px 12px 4px;flex:0 0 auto}
+.live .l1{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+.live .h{font-size:1.3rem;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.live .sub{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.live .st{font-size:.82rem;font-weight:700;margin-left:auto}
+.live .l2{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:3px}
+.bar{display:flex;height:9px;border-radius:3px;overflow:hidden;background:var(--grid);margin:4px 0 2px}.bar span{display:block;height:100%}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:0}
+.seg{display:flex;gap:4px;padding:4px 10px;flex:0 0 auto;overflow-x:auto;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}
+.seg button{flex:1 0 auto;border:1px solid var(--rule);background:var(--bg);color:var(--navy);border-radius:7px;padding:5px 9px;font-size:.86rem;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected=true]{background:var(--navy);border-color:var(--navy);color:var(--bg)}
+.seg button .v{font-size:.72rem;opacity:.85;display:block;font-variant-numeric:tabular-nums}
+.seg .fold{flex:0 0 auto;min-width:40px;font-size:1rem}
+.stage{position:relative;flex:1 1 auto;min-height:170px;margin:0 10px 8px;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--bg)}
+.view{position:absolute;inset:0;display:none}.view.on{display:flex;flex-direction:column}
+.fill{flex:1 1 auto;min-height:0;position:relative}
+svg.full,canvas.full{width:100%;height:100%;display:block}
+.ax{stroke:var(--muted);stroke-width:1}.gl{stroke:var(--grid);stroke-width:1}.tk{fill:var(--muted);font-size:11px}.axt{fill:var(--ink);font-size:12px}
 .halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
-.clegend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.84rem;color:var(--muted);margin-top:4px}
-.sw{display:inline-block;width:22px;vertical-align:middle;margin-right:6px}
-.summary{border-left:3px solid var(--steel);background:var(--panel);padding:10px 14px;margin:16px 0 4px;max-width:96ch}
-.params{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:14px;margin-top:10px}
-fieldset{border:1px solid var(--rule);border-radius:8px;padding:6px 14px 10px;margin:0;min-width:0}
-legend{font-weight:700;color:var(--navy);padding:0 6px;font-size:.98rem}
-.term{font-weight:700;font-variant-numeric:tabular-nums}
-.help{font-size:.84rem;color:var(--muted);margin:2px 0 6px}
-.row{margin:8px 0 2px}
-.row .top{display:flex;justify-content:space-between;gap:10px;font-size:.9rem}
-.row output{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
-.row input[type=range]{width:100%;accent-color:var(--steel);margin:2px 0 0}
-.row .ends{display:flex;justify-content:space-between;font-size:.74rem;color:var(--muted);margin-top:-2px}
-.factors{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:10px 0}
-.fac{border:1px solid var(--rule);border-radius:8px;padding:10px 14px}
-.fac h3{margin:0 0 2px;font-size:1rem}
-.fac .v{font-size:1.4rem;font-weight:700;font-variant-numeric:tabular-nums}
-.fac .gauge{height:10px;background:var(--grid);border-radius:5px;overflow:hidden;margin:6px 0}
-.fac .gauge span{display:block;height:100%}
-.fac p{margin:4px 0;font-size:.88rem}
-.fac .cost{color:var(--muted)}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
-.micro{border:1px solid var(--rule);border-radius:8px;overflow:hidden}
-#cm{display:block;width:100%;height:300px}
-.mrow{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin:8px 2px;font-size:.9rem}
-.mrow label{display:flex;gap:6px;align-items:center}
-.mcap{margin:6px 2px 0;max-width:96ch}
-.readout{display:flex;flex-wrap:wrap;margin:10px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.readout div{padding:8px 18px 8px 0;margin-right:18px;border-right:1px solid var(--rule)}
-.readout div:last-child{border-right:0;margin-right:0}
-.readout span{display:block;font-size:.8rem;color:var(--muted)}
-.readout b{font-size:1.05rem;font-variant-numeric:tabular-nums}
-details{margin:18px 0 0}
-summary{cursor:pointer;color:var(--navy);font-weight:700}
-.eqs p{margin:6px 0;max-width:90ch}
-.note{font-size:.88rem;color:var(--muted);max-width:90ch}
-</style>
+.hint{position:absolute;left:52px;top:6px;font-size:.72rem;color:var(--muted);pointer-events:none;transition:opacity .3s}
+.ovl{position:absolute;font-size:.74rem;color:var(--muted);pointer-events:none}.ovl.tl{left:8px;top:6px;right:8px}
+.ovl.br{right:6px;bottom:6px;pointer-events:auto;display:flex;gap:4px}.ovl.br .btn{background:var(--bg);padding:3px 8px;font-size:.8rem}
+.mtop{display:flex;gap:6px;align-items:center;padding:5px 6px;flex:0 0 auto;overflow-x:auto;scrollbar-width:none}.mtop .sp{flex:1}
+.mtop .lab{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.cap{position:absolute;left:6px;right:6px;bottom:6px;max-height:72%;overflow:auto;background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:.84rem;display:none}.cap.on{display:block}
+.scroll{overflow:auto;padding:8px 12px}
+.scroll table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:.84rem}
+.scroll th{font-weight:400;color:var(--muted);text-align:right;padding:4px;border-bottom:1px solid var(--rule)}
+.scroll td{padding:5px 4px;border-bottom:1px solid var(--rule);text-align:right}
+.scroll th:first-child,.scroll td:first-child{text-align:left}
+.scroll h3{font-size:.9rem;margin:10px 0 2px;color:var(--navy)}.scroll p{margin:6px 0;font-size:.86rem}
+.wrapx{overflow-x:auto}
+.pbody{flex:1 1 auto;min-height:0;overflow:auto;padding:2px 12px 10px}
+.row{margin:8px 0 4px}.row .top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.88rem}
+.row .val{border:1px dashed var(--steel);background:transparent;color:var(--ink);border-radius:5px;padding:1px 7px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;cursor:text;font-size:.88rem}
+.row input[type=range]{width:100%;accent-color:var(--steel);margin:4px 0 0;height:26px}
+.row input[type=text]{width:100%;padding:6px 8px;border:1px solid var(--steel);border-radius:6px;background:var(--bg);color:var(--ink);font-size:16px}
+.row select{width:100%;margin-top:4px;padding:6px 8px;border:1px solid var(--steel);border-radius:6px;background:var(--bg);color:var(--ink);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin:5px 0}
+.eq{font-family:"Times New Roman",Times,serif;font-size:.95rem;color:var(--muted);margin:3px 0 0;line-height:1.35}
+.eq .r{color:var(--eqr);font-weight:700}.eq .n{font-family:Arial,Helvetica,sans-serif;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ptext{font-size:.8rem;color:var(--muted);margin:6px 0 4px}
+.info{font-size:.8rem;color:var(--muted);background:var(--panel);border-radius:6px;padding:6px 8px;margin:8px 0 2px}
+.warnbox{font-size:.8rem;color:var(--warn);font-weight:700;margin:4px 0}
+.chk{display:flex;gap:8px;align-items:center;font-size:.88rem;cursor:pointer;padding:5px 0}.chk input{width:19px;height:19px;accent-color:var(--steel)}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 0;padding-top:8px;border-top:1px solid var(--rule)}
+.ghead:first-child{border-top:0;margin-top:4px}.ghead h2{font-size:.98rem;margin:0;color:var(--navy)}.ghead span{font-size:.82rem;font-weight:700;font-variant-numeric:tabular-nums}
+.forms{display:flex;gap:6px 14px;overflow-x:auto;padding:4px 8px 2px;flex:0 0 auto;scrollbar-width:none;border-bottom:1px solid var(--rule)}.forms::-webkit-scrollbar{display:none}
+.forms .fm{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;font-size:.72rem;line-height:1.2;text-align:center}.forms .fm span{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;padding:10px;overflow:auto}
+.card{border:1px solid var(--rule);border-radius:8px;padding:9px 12px}.card h3{margin:0 0 2px;font-size:.95rem}.card p{margin:4px 0;font-size:.85rem}.card .cost{color:var(--muted)}
+.gauge{height:9px;background:var(--grid);border-radius:5px;overflow:hidden;margin:5px 0}.gauge span{display:block;height:100%}
+dialog{border:1px solid var(--rule);border-radius:12px;padding:0;max-width:660px;width:calc(100% - 20px);max-height:calc(100dvh - 40px);background:var(--bg);color:var(--ink)}
+dialog::backdrop{background:rgba(10,20,30,.45)}
+.dhead{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--bg)}
+.dhead h2{margin:0;font-size:1.05rem;color:var(--navy)}.dbody{padding:4px 16px 16px;font-size:.92rem}.dbody h3{font-size:.98rem;color:var(--navy);margin:14px 0 4px}.dbody p{margin:6px 0}.dbody .note{color:var(--muted);font-size:.85rem}
+.fallback{margin:auto;padding:20px;text-align:center;color:var(--muted)}
+:root{--a:#16876c;--b:#7a4fc4}@media (prefers-color-scheme:dark){:root{--a:#4fd1b0;--b:#b99cf5}}#c3{width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}</style>
 </head>
 <body>
-<main>
-<h1>Chromatographic resolution: separating two peaks</h1>
-<p class="lede">Two compounds, A and B, are injected together. They separate only if B spends a little more time stuck to the stationary phase than A does, and only if their bands stay narrow enough not to overlap. Resolution, R<sub>s</sub>, measures how well that works. At R<sub>s</sub> = 1.5 the peaks are baseline resolved.</p>
-<p class="eq">R<sub>s</sub> = 2(t<sub>R,B</sub> − t<sub>R,A</sub>) / (W<sub>A</sub> + W<sub>B</sub>) ≈ (√N / 4) · ((α − 1)/α) · (k<sub>B</sub> / (1 + k<sub>B</sub>))</p>
-<p class="eqnum" id="eqnum"></p>
-
-<div class="controls types" role="group" aria-label="Type of chromatography">
-  <button type="button" data-type="hplc" aria-pressed="true">HPLC</button>
-  <button type="button" data-type="gc" aria-pressed="false">GC, capillary column</button>
-</div>
-
-<section class="hero">
-  <figure style="margin:0">
-    <div class="view">
-      <canvas id="c3" tabindex="0" aria-label="3D view of the whole column with bands of A and B moving toward the detector. Drag or use the arrow keys to rotate."></canvas>
-      <div class="ovl tl" id="ovlTitle">The whole column, from injector (left) to detector (right)</div>
-      <div class="ovl tr" id="clock"></div>
-      <div class="ovl br">
-        <button type="button" id="zin" aria-label="Zoom in">+</button>
-        <button type="button" id="zout" aria-label="Zoom out">−</button>
-        <button type="button" id="vreset">Reset view</button>
-        <button type="button" id="again">Inject again</button>
-        <button type="button" id="play" aria-pressed="false">Pause</button>
-      </div>
-    </div>
-    <div class="legend3"><span><i class="dot" style="background:var(--a)"></i>compound A</span><span><i class="dot" style="background:var(--b)"></i>compound B (stays longer in the stationary phase)</span></div>
-    <figcaption id="cap3"></figcaption>
-  </figure>
-  <div>
-    <div class="bigR"><span class="r" id="Rbig"></span><span class="st" id="Rst"></span></div>
-    <div class="bigR"><span class="s" id="Rsub"></span></div>
-    <svg id="over" viewBox="0 0 540 70" role="img" aria-label="The whole chromatogram, with the two peaks highlighted"></svg>
-    <svg id="zoom" viewBox="0 0 540 300" role="img" aria-label="Close-up of the two peaks"></svg>
-    <div class="clegend">
-      <span><i class="sw" style="border-top:2px dashed var(--a)"></i>A alone</span>
-      <span><i class="sw" style="border-top:2px dashed var(--b)"></i>B alone</span>
-      <span><i class="sw" style="border-top:3px solid var(--navy)"></i>Detector signal (A + B)</span>
-    </div>
+<div class="app">
+  <header>
+    <div class="brand">Interactive Chemistry · Ali Shafiee · University of Florida</div>
+    <div class="hrow"><h1>Resolution<span class="long"> explorer</span></h1>
+    <select id="ctype" class="bigsel" aria-label="Type of chromatography"><option value="hplc">HPLC</option><option value="gc">GC, capillary</option></select>
+    <button type="button" class="btn" id="guideBtn">Guide</button></div>
+  </header>
+  <div class="main">
+    <section class="left" aria-label="Results">
+      <div class="live" aria-live="polite"><div id="live"></div></div>
+      <div class="seg" role="tablist" aria-label="View" id="vtabs"></div>
+      <div class="stage" id="stage"><div class="view" id="v-chrom" role="tabpanel" aria-label="Chromatogram"><div class="fill"><svg class="full" id="chsv" role="img" aria-label="Chromatogram of the two compounds"></svg></div></div><div class="view" id="v-col" role="tabpanel" aria-label="Column"><div class="fill" style="background:radial-gradient(ellipse at 50% 40%,var(--panel),var(--bg) 75%)"><canvas id="c3" tabindex="0" aria-label="3D view of the whole column with the two bands moving to the detector. Drag to rotate."></canvas><div class="ovl tl">Injector (left) to detector (right). <span style="color:var(--a)">●</span> A <span style="color:var(--b)">●</span> B <span id="clock" style="float:right;color:var(--ink)"></span></div><div class="ovl br"><button type="button" class="btn" id="zin" aria-label="Zoom in">+</button><button type="button" class="btn" id="zout" aria-label="Zoom out">−</button><button type="button" class="btn" id="vreset">Reset</button><button type="button" class="btn" id="again">Inject again</button><button type="button" class="btn playbtn" aria-pressed="false">Pause</button></div></div></div><div class="view" id="v-mol" role="tabpanel" aria-label="Close-up"><div class="mtop"><label class="chk" style="font-size:.8rem;padding:0"><input type="checkbox" id="exag" checked> Exaggerate α ×10</label><span class="sp"></span><button type="button" class="btn" id="mrestart">Restart</button><button type="button" class="btn" data-cap="mcap" aria-expanded="false">Explain</button><button type="button" class="btn playbtn" aria-pressed="false">Pause</button></div><div class="fill"><canvas class="full" id="cm" role="img" aria-label="Molecules of A and B moving between the mobile and stationary phases"></canvas><div class="cap" id="mcap"></div></div></div><div class="view" id="v-imp" role="tabpanel" aria-label="Improve it"><div class="cards" id="impb" style="flex:1"></div></div><div class="view" id="v-nums" role="tabpanel" aria-label="Numbers"><div class="scroll" id="nmr" style="flex:1"></div></div></div>
+    </section>
+    <section class="right" aria-label="Controls">
+      <div class="seg" role="tablist" aria-label="Control group" id="ptabs"><button type="button" class="fold" id="fold" aria-expanded="true" aria-label="Hide the controls to enlarge the view">▾</button></div>
+      <div class="pbody" id="pbody" role="tabpanel"></div>
+    </section>
   </div>
-</section>
-<p class="summary" id="sum" aria-live="polite"></p>
-
-<h2>Change the column, the chemistry and the run</h2>
-<p class="help" style="font-size:.92rem">Every slider changes the 3D column, the chromatogram and the numbers at the same time.</p>
-<div class="params" id="params"></div>
-
-<h2>Three things control resolution</h2>
-<p class="help" style="font-size:.92rem">R<sub>s</sub> is the product of three factors. Each card shows what you would have to change, on its own, to reach R<sub>s</sub> = 1.5, and what it would cost you.</p>
-<div class="factors" id="factors"></div>
-
-<h2>Why do A and B move at different speeds?</h2>
-<div class="micro"><canvas id="cm" role="img" aria-label="Animated close-up of A and B molecules moving between the mobile and stationary phases"></canvas></div>
-<div class="mrow">
-  <label><input type="checkbox" id="exag" checked> Exaggerate the difference between A and B ten times so you can see it</label>
-  <button type="button" id="mrestart">Start again</button>
 </div>
-<p class="mcap" id="mcap"></p>
-
-<h2>Numbers for this run</h2>
-<div class="readout" aria-live="polite">
-  <div><span>Plates, N = L/H</span><b id="rN"></b></div>
-  <div><span>Dead time, t<sub>M</sub></span><b id="rTM"></b></div>
-  <div><span>Retention times, A and B</span><b id="rTR"></b></div>
-  <div><span>Base widths, W<sub>A</sub> and W<sub>B</sub></span><b id="rW"></b></div>
-  <div><span>Signal at the valley</span><b id="rV"></b></div>
-  <div><span>k<sub>A</sub> and k<sub>B</sub> = α·k<sub>A</sub></span><b id="rK"></b></div>
-</div>
-
-<details class="eqs">
-  <summary>Equations and assumptions used on this page</summary>
-  <p><b>Retention.</b> t<sub>R</sub> = t<sub>M</sub>(1 + k), with t<sub>M</sub> = L/u. The retention factor k is the ratio of the time a molecule spends in the stationary phase to the time it spends in the mobile phase, so a molecule spends a fraction k/(1 + k) of its time stuck.</p>
-  <p><b>Selectivity.</b> α = k<sub>B</sub>/k<sub>A</sub>. It depends on how differently the two compounds interact with the stationary phase, so it changes when you change the stationary phase, the mobile phase composition (in HPLC) or the temperature.</p>
-  <p><b>Peak width.</b> Each peak is a Gaussian with σ = t<sub>R</sub>/√N and base width W = 4σ. N = L/H, where H is the plate height (see the Van Deemter equation).</p>
-  <p><b>Resolution.</b> R<sub>s</sub> is calculated exactly from the retention times and widths. The approximate form on the right of the equation (the Purnell equation) shows how R<sub>s</sub> depends on efficiency, selectivity and retention; it gives nearly the same number.</p>
-  <p class="note">The 3D view shows the whole column shortened and widened so you can see it; band widths along the column are drawn to scale relative to the column length. The molecular close-up is a simplified model of molecules hopping between the two phases.</p>
-</details>
-</main>
-
+<dialog id="guide" aria-labelledby="gTitle">
+  <div class="dhead"><h2 id="gTitle">Guide</h2><button type="button" class="btn" id="guideClose">Close</button></div>
+  <div class="dbody"><p class="note" style="margin-top:10px">Interactive Chemistry · Ali Shafiee · University of Florida</p><h3>What this tool shows</h3><p>Two compounds separate only if one spends a little more time in the stationary phase than the other, and only if their bands stay narrow enough not to overlap. Resolution measures how well that works: R<sub>s</sub> = 2(t<sub>R,B</sub> − t<sub>R,A</sub>)/(W<sub>A</sub> + W<sub>B</sub>). At R<sub>s</sub> = 1.5 the peaks are baseline resolved.</p>
+<h3>Three factors</h3><p>The Purnell equation, R<sub>s</sub> ≈ (√N/4)·((α − 1)/α)·(k<sub>B</sub>/(1 + k<sub>B</sub>)), splits resolution into efficiency (N, how narrow the bands are), selectivity (α = k<sub>B</sub>/k<sub>A</sub>, how differently the compounds interact with the stationary phase) and retention (k, how long they are held). Because R<sub>s</sub> grows only with √N, doubling the column length gains 41% at double the run time. A small increase in α near 1 is far more powerful. Retention helps until k is about 10.</p>
+<h3>Views</h3><p>The Chromatogram shows the whole run and enlarges the pair with their structures. Column shows both bands traveling the column in 3D. Close-up shows the molecular reason: each time B lands in the stationary phase it stays a little longer. Improve it shows what each factor would need, on its own, to reach R<sub>s</sub> = 1.5, and what it costs.</p>
+<p class="note">Peaks are Gaussian with σ = t<sub>R</sub>/√N. The α and k values for the compound pairs are typical, not exact for any one column. The close-up is a simplified model of molecules hopping between phases.</p></div>
+</dialog>
 <script>
 /* three.js r128, MIT License, Copyright 2010-2021 three.js authors, https://threejs.org */
 /**
@@ -183,200 +128,224 @@ summary{cursor:pointer;color:var(--navy);font-weight:700}
 <script>
 (function(){
 'use strict';
-var TYPES={
-  hplc:{name:'HPLC',packed:true,lenUnit:'cm',lenScale:1e-2,hUnit:'µm',hScale:1e-6,uUnit:'mm/s',uScale:1e-3},
-  gc:{name:'GC',packed:false,lenUnit:'m',lenScale:1,hUnit:'mm',hScale:1e-3,uUnit:'cm/s',uScale:1e-2}
-};
-var SPEC=[
-  {id:'L',grp:'N',label:'Column length, L',unit:function(t){return t.lenUnit;},r:{hplc:[3,25,0.5,15],gc:[5,100,1,30]}},
-  {id:'H',grp:'N',label:'Plate height, H',unit:function(t){return t.hUnit;},log:true,r:{hplc:[2,60,0,10],gc:[0.08,2,0,0.3]},ends:['efficient column','inefficient column']},
-  {id:'a',grp:'S',label:'Selectivity, α = k<sub>B</sub>/k<sub>A</sub>',unit:'',r:{hplc:[1,1.6,0.002,1.06],gc:[1,1.3,0.001,1.02]},ends:['identical','very different']},
-  {id:'k',grp:'K',label:'Retention factor of A, k<sub>A</sub>',unit:'',log:true,r:{hplc:[0.1,30,0,2],gc:[0.1,30,0,4]},ends:['barely retained','strongly retained']},
-  {id:'u',grp:'F',label:'Linear velocity, u',unit:function(t){return t.uUnit;},r:{hplc:[0.2,5,0.05,1],gc:[10,80,1,35]}},
-  {id:'q',grp:'F',label:'Amount of B compared with A',unit:'×',log:true,r:{hplc:[0.1,10,0,1],gc:[0.1,10,0,1]},ends:['B much smaller','B much larger']}
-];
-var VALS={};Object.keys(TYPES).forEach(function(t){VALS[t]={};SPEC.forEach(function(s){VALS[t][s.id]=s.r[t][3];});});
-var type='hplc';
-function calc(t,v){
-  var TT=TYPES[t],L=v.L*TT.lenScale,H=v.H*TT.hScale,N=L/H,u=v.u*TT.uScale,tM=L/u;
-  var kA=v.k,kB=v.k*v.a,tA=tM*(1+kA),tB=tM*(1+kB),rN=Math.sqrt(N),sA=tA/rN,sB=tB/rN;
-  var Rs=2*(tB-tA)/(4*sA+4*sB),fe=rN/4,fs=(v.a-1)/v.a,fk=kB/(1+kB);
-  var p={L:L,H:H,N:N,u:u,tM:tM,kA:kA,kB:kB,tA:tA,tB:tB,sA:sA,sB:sB,Rs:Rs,fe:fe,fs:fs,fk:fk,Rp:fe*fs*fk,q:v.q,a:v.a};
-  /* valley between the two maxima of the summed signal */
-  var t0=tA-5*sA,t1=tB+5*sB,n=1500,ys=[],i;
-  for(i=0;i<=n;i++){var tt=t0+(t1-t0)*i/n;ys.push(gN(tt,tA,sA)+v.q*gN(tt,tB,sB));}
-  var pk=[];for(i=1;i<n;i++){if(ys[i]>ys[i-1]&&ys[i]>=ys[i+1])pk.push(i);}
-  p.valley=null;if(pk.length>=2){var a=pk[0],b=pk[pk.length-1],mn=Infinity;for(i=a;i<=b;i++)mn=Math.min(mn,ys[i]);p.valley=mn/Math.min(ys[a],ys[b])*100;}
-  return p;
-}
-function gN(t,c,s){var z=(t-c)/s;return Math.exp(-0.5*z*z)/(s*2.5066283);}
-
-/* formatting */
-function sig(x,n){if(x===0)return '0';if(!isFinite(x))return '–';var a=Math.abs(x);if(a>=1e5)return Math.round(x).toLocaleString('en-US');var d=Math.max(0,n-1-Math.floor(Math.log10(a)));return x.toFixed(Math.min(d,6));}
-function fmtT(s){if(s<120)return sig(s,3)+' s';if(s<7200)return sig(s/60,3)+' min';return sig(s/3600,3)+' h';}
-function fmtL(m){var t=TYPES[type];return sig(m/t.lenScale,3)+' '+t.lenUnit;}
-function fmtH(m){var t=TYPES[type];return sig(m/t.hScale,3)+' '+t.hUnit;}
-function fmtVal(s,v){if(s.log)return sig(v,s.id==='H'&&type==='gc'?2:3);var st=s.r[type][2];var dec=st<0.002?3:(st<0.01?3:(st<0.1?2:(st<1?1:0)));return v.toFixed(dec);}
+var $=function(id){return document.getElementById(id);};
 function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
 function gauss(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
-
-/* parameter panel */
-var params=document.getElementById('params'),inputs={};
-var GROUPS=[
-  {id:'N',title:'Efficiency, N',help:'A longer column or a smaller plate height H (smaller particles, better packing, optimal flow) gives more plates and narrower peaks.'},
-  {id:'S',title:'Selectivity, α',help:'How differently A and B interact with the stationary phase. Change it by choosing a different stationary phase, changing the mobile phase composition (HPLC) or changing the temperature.'},
-  {id:'K',title:'Retention, k',help:'How long the compounds are held. Raise k with a weaker mobile phase (HPLC) or a lower temperature (GC).'},
-  {id:'F',title:'Flow and sample',help:'Flow sets how long the run takes. The sample amounts change the peak sizes, not where they elute.'}
-];
-var termEls={};
-function buildParams(){
-  var TT=TYPES[type];params.innerHTML='';inputs={};termEls={};
-  GROUPS.forEach(function(G){
-    var fs=document.createElement('fieldset');fs.innerHTML='<legend>'+G.title+'</legend>';
-    var tv=document.createElement('div');tv.className='term';fs.appendChild(tv);termEls[G.id]=tv;
-    var hp=document.createElement('p');hp.className='help';hp.textContent=G.help;fs.appendChild(hp);
-    SPEC.filter(function(s){return s.grp===G.id;}).forEach(function(s){
-      var rr=s.r[type],row=document.createElement('div');row.className='row';var lid='p_'+s.id;
-      var unit=typeof s.unit==='function'?s.unit(TT):s.unit;
-      row.innerHTML='<div class="top"><label for="'+lid+'">'+s.label+'</label><output for="'+lid+'"></output></div>';
-      var inp=document.createElement('input');inp.type='range';inp.id=lid;
-      if(s.log){inp.min=Math.log10(rr[0]);inp.max=Math.log10(rr[1]);inp.step=0.005;inp.value=Math.log10(VALS[type][s.id]);}
-      else{inp.min=rr[0];inp.max=rr[1];inp.step=rr[2];inp.value=VALS[type][s.id];}
-      row.appendChild(inp);
-      var ends=document.createElement('div');ends.className='ends';ends.innerHTML='<span>'+(s.ends?s.ends[0]:fmtVal(s,rr[0]))+'</span><span>'+(s.ends?s.ends[1]:fmtVal(s,rr[1]))+'</span>';row.appendChild(ends);
-      var out=row.querySelector('output');
-      function show(){var t=fmtVal(s,VALS[type][s.id])+(unit?(unit==='×'?'×':' '+unit):'');out.textContent=t;inp.setAttribute('aria-valuetext',t);}
-      inp.addEventListener('input',function(){VALS[type][s.id]=s.log?Math.pow(10,+inp.value):+inp.value;show();update(true);});
-      inputs[s.id]={inp:inp,show:show,s:s};
-      fs.appendChild(row);show();
-    });
-    params.appendChild(fs);
-  });
-}
-function setVal(id,v){var I=inputs[id],rr=I.s.r[type];v=clamp(v,rr[0],rr[1]);VALS[type][id]=v;I.inp.value=I.s.log?Math.log10(v):v;I.show();}
-
-/* chromatogram (overview + zoom) */
+function sig(x,n){if(x===0)return '0';if(!isFinite(x))return '–';var a=Math.abs(x);if(a>=1e5)return Math.round(x).toLocaleString('en-US');var d=Math.max(0,n-1-Math.floor(Math.log10(a)));return x.toFixed(Math.min(d,6));}
+var SUPD={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function sup(n){return String(n).split('').map(function(c){return SUPD[c]||c;}).join('');}
+function sci(x,d){if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x))),m=x/Math.pow(10,e);var ms=m.toFixed(d==null?1:d);if(Math.abs(+ms)>=10){e++;ms=(m/10).toFixed(d==null?1:d);}return ms+' × 10'+sup(e);}
+function minus(s){return String(s).replace(/-/g,'−');}
 var NS='http://www.w3.org/2000/svg';
 function el(tag,a,txt){var e=document.createElementNS(NS,tag);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
-function clear(s){while(s.firstChild)s.removeChild(s.firstChild);}
-function niceStep(span,n){var raw=span/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*p;}
-var P=null,anim={t:0,hold:0};
+function clearSvg(s){while(s.firstChild)s.removeChild(s.firstChild);}
+function niceStep(span,n){var raw=span/(n||5),p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*p;}
+function gN(t,c,s){var z=(t-c)/s;return Math.exp(-0.5*z*z)/(s*2.5066283);}
+function R_(x){return '<span class="r">'+x+'</span>';}function N_(x){return '<span class="n">'+x+'</span>';}
+function svgSize(svg){var W=Math.max(200,svg.clientWidth),H=Math.max(120,svg.clientHeight);svg.setAttribute('viewBox','0 0 '+W+' '+H);clearSvg(svg);return [W,H];}
+var PAL={};function readPal(){var cs=getComputedStyle(document.documentElement);['ink','navy','steel','muted','rule','panel','bg','grid','eqr','good','warn','alert','sta','film','support','partEdge','c0','c1','c2','c3','c4','c5','c6','c7','c8'].concat(APP.pal||[]).forEach(function(k){PAL[k]=cs.getPropertyValue('--'+k).trim();});}
+function isDark(){return window.matchMedia('(prefers-color-scheme: dark)').matches;}
+/* ---------- controls ---------- */
+var EQ={},CTL={},running=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function addEq(box,id,fn){if(!fn)return;EQ[id]=fn;var d=document.createElement('div');d.className='eq';d.setAttribute('data-eq',id);box.appendChild(d);}
+function ctlSlider(box,o){
+  var row=document.createElement('div');row.className='row';row.innerHTML='<div class="top"><label for="s_'+o.id+'">'+o.label+'</label></div>';
+  var vb=document.createElement('button');vb.type='button';vb.className='val';vb.setAttribute('aria-label','Type a value for '+o.label.replace(/<[^>]+>/g,''));row.querySelector('.top').appendChild(vb);
+  addEq(row,o.id,o.eq);
+  var inp=document.createElement('input');inp.type='range';inp.id='s_'+o.id;
+  if(o.log){inp.min=Math.log10(o.min);inp.max=Math.log10(o.max);inp.step=0.005;}else{inp.min=o.min;inp.max=o.max;inp.step=o.step;}
+  row.appendChild(inp);
+  function show(){var v=o.get();vb.textContent=o.fmt(v);inp.value=o.log?Math.log10(v):v;inp.setAttribute('aria-valuetext',o.fmt(v));}
+  inp.addEventListener('input',function(){o.set(o.log?Math.pow(10,+inp.value):+inp.value);show();update(o.re);});
+  vb.addEventListener('click',function(){var ti=document.createElement('input');ti.type='text';ti.inputMode='decimal';ti.value=String(+o.get().toPrecision(4));
+    ti.setAttribute('aria-label',o.label.replace(/<[^>]+>/g,'')+' ('+o.min+' to '+o.max+')');ti.style.cssText='width:8em;padding:2px 6px;border:1px solid var(--steel);border-radius:5px;background:var(--bg);color:var(--ink);font-size:16px;text-align:right';
+    vb.replaceWith(ti);ti.focus();ti.select();var done=false;
+    function fin(a){if(done)return;done=true;if(a){var x=parseFloat(String(ti.value).replace('×10','e').replace(/\s/g,''));if(isFinite(x))o.set(clamp(x,o.min,o.max));}ti.replaceWith(vb);show();update(o.re);}
+    ti.addEventListener('blur',function(){fin(true);});ti.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();fin(true);}else if(e.key==='Escape')fin(false);});});
+  box.appendChild(row);show();CTL[o.id]={show:show};return row;
+}
+function ctlChips(box,o){
+  var row=document.createElement('div');row.className='row';row.innerHTML='<div class="top"><span>'+o.label+'</span></div>';
+  var ch=document.createElement('div');ch.className='chips';ch.setAttribute('role','group');ch.setAttribute('aria-label',o.label.replace(/<[^>]+>/g,''));
+  o.options.forEach(function(op){var b=document.createElement('button');b.type='button';b.className='btn';b.innerHTML=op[1];b.setAttribute('aria-pressed',o.get()===op[0]?'true':'false');
+    b.addEventListener('click',function(){o.set(op[0]);ch.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});if(o.rebuild)buildPanel();update(o.re);});ch.appendChild(b);});
+  row.appendChild(ch);addEq(row,o.id,o.eq);box.appendChild(row);return row;
+}
+function ctlSelect(box,o){
+  var row=document.createElement('div');row.className='row';row.innerHTML='<div class="top"><label for="q_'+o.id+'">'+o.label+'</label></div>';
+  var sel=document.createElement('select');sel.id='q_'+o.id;o.options.forEach(function(op){var x=document.createElement('option');x.value=op[0];x.textContent=op[1];sel.appendChild(x);});sel.value=o.get();
+  sel.addEventListener('change',function(){o.set(sel.value);if(o.rebuild)buildPanel();update(o.re);});row.appendChild(sel);addEq(row,o.id,o.eq);box.appendChild(row);return row;
+}
+function ctlCheck(box,o){var l=document.createElement('label');l.className='chk';l.innerHTML='<input type="checkbox"'+(o.get()?' checked':'')+'> '+o.label;l.querySelector('input').addEventListener('change',function(){o.set(this.checked);if(o.rebuild)buildPanel();update(o.re);});box.appendChild(l);return l;}
+function ctlText(box,o){var row=document.createElement('div');row.className='row';row.innerHTML='<div class="top"><label for="t_'+o.id+'">'+o.label+'</label><span class="warnbox" id="tw_'+o.id+'"></span></div>';
+  var t=document.createElement('input');t.type='text';t.id='t_'+o.id;t.value=o.get();t.autocapitalize='off';t.spellcheck=false;t.setAttribute('autocomplete','off');
+  t.addEventListener('input',function(){var err=o.set(t.value);$('tw_'+o.id).textContent=err||'';if(!err)update(o.re);});row.appendChild(t);addEq(row,o.id,o.eq);box.appendChild(row);CTL[o.id]={input:t};return row;}
+function ctlNote(box,html,cls){var p=document.createElement('p');p.className=cls||'ptext';p.innerHTML=html;box.appendChild(p);return p;}
+function refreshEq(){document.querySelectorAll('.eq[data-eq]').forEach(function(e){var f=EQ[e.getAttribute('data-eq')];if(f)e.innerHTML=f();});}
+/* ---------- panel ---------- */
+var pgroup=null,MQall=window.matchMedia('(min-width:900px) and (min-height:640px)');
+function buildPanel(){
+  var box=$('pbody'),all=MQall.matches,groups=APP.groups();box.innerHTML='';EQ={};CTL={};
+  if(!groups.some(function(g){return g.id===pgroup;}))pgroup=groups[0].id;
+  var tabs=$('ptabs');tabs.querySelectorAll('[role=tab]').forEach(function(b){b.remove();});
+  groups.forEach(function(g){var b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.setAttribute('data-p',g.id);b.setAttribute('aria-selected',g.id===pgroup?'true':'false');b.innerHTML=g.tab+'<span class="v" id="pv-'+g.id+'"></span>';
+    b.addEventListener('click',function(){pgroup=g.id;setFold(false);buildPanel();box.scrollTop=0;});tabs.insertBefore(b,$('fold'));});
+  document.querySelector('.right').classList.toggle('all',all);
+  if(all)groups.forEach(function(g){var hd=document.createElement('div');hd.className='ghead';hd.innerHTML='<h2>'+g.title+'</h2><span id="gh-'+g.id+'"></span>';box.appendChild(hd);g.render(box);});
+  else groups.filter(function(g){return g.id===pgroup;})[0].render(box);
+  var rb=document.createElement('button');rb.type='button';rb.className='btn';rb.style.marginTop='12px';rb.textContent='Reset all to defaults';
+  rb.addEventListener('click',function(){APP.reset();buildPanel();update(true);});box.appendChild(rb);
+  if(APP.S)refreshEq();if(APP.tabVals)APP.tabVals();
+}
+function tabVal(id,txt){var a=$('pv-'+id);if(a)a.textContent=txt;var b=$('gh-'+id);if(b)b.textContent=txt;}
+function setFold(c){var r=document.querySelector('.right');r.classList.toggle('collapsed',c);var f=$('fold');f.textContent=c?'▴':'▾';f.setAttribute('aria-expanded',c?'false':'true');f.setAttribute('aria-label',c?'Show the controls':'Hide the controls to enlarge the view');}
+/* ---------- views ---------- */
+var view=null;
+function V(){return APP.views.filter(function(v){return v.id===view;})[0];}
+function setView(id){view=id;document.querySelectorAll('#vtabs [role=tab]').forEach(function(b){b.setAttribute('aria-selected',b.getAttribute('data-view')===id?'true':'false');});
+  APP.views.forEach(function(v){$('v-'+v.id).classList.toggle('on',v.id===id);});var v=V();if(v.enter)v.enter();if(v.draw)v.draw();}
+function update(re){APP.compute();APP.live();refreshEq();if(APP.tabVals)APP.tabVals();var v=V();if(v){if(re&&v.reset)v.reset();if(v.draw)v.draw();}}
+var last=0;function loop(ts){if(!running)return;var dt=last?Math.min(0.05,(ts-last)/1000):0;last=ts;var v=V();if(!document.hidden&&v&&v.step){v.step(dt);if(v.draw)v.draw(true);}requestAnimationFrame(loop);}
+function setPlay(on){running=on;document.querySelectorAll('.playbtn').forEach(function(b){b.textContent=on?'Pause':'Play';b.setAttribute('aria-pressed',on?'false':'true');});if(on){last=0;requestAnimationFrame(loop);}}
+function boot(){
+  readPal();
+  var vt=$('vtabs');APP.views.forEach(function(v){var b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.setAttribute('data-view',v.id);b.textContent=v.label;b.addEventListener('click',function(){setView(v.id);});vt.appendChild(b);});
+  $('fold').addEventListener('click',function(){setFold(!document.querySelector('.right').classList.contains('collapsed'));});
+  document.querySelectorAll('.playbtn').forEach(function(b){b.addEventListener('click',function(){setPlay(!running);});});
+  var g=$('guide');$('guideBtn').addEventListener('click',function(){if(g.showModal)g.showModal();else g.setAttribute('open','');});
+  $('guideClose').addEventListener('click',function(){if(g.close)g.close();else g.removeAttribute('open');});g.addEventListener('click',function(e){if(e.target===g&&g.close)g.close();});
+  document.querySelectorAll('[data-cap]').forEach(function(b){b.addEventListener('click',function(){var c=$(b.getAttribute('data-cap')),on=!c.classList.contains('on');c.classList.toggle('on',on);b.setAttribute('aria-expanded',on?'true':'false');b.textContent=on?'Hide':'Explain';});});
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){readPal();if(APP.theme)APP.theme();var v=V();if(v&&v.draw)v.draw();});
+  MQall.addEventListener('change',buildPanel);
+  new ResizeObserver(function(){var v=V();if(v){if(v.resize)v.resize();if(v.draw)v.draw();}}).observe($('stage'));
+  if(APP.init)APP.init();
+  APP.compute();buildPanel();APP.live();
+  var h=(location.hash||'').slice(1);setView(APP.views[0].id);if(h&&APP.hash)APP.hash(h);
+  if(running)requestAnimationFrame(loop);else setPlay(false);
+}
+
+var APP={pal:[]};
+/* line-angle structure engine: def = {a:[{x,y,l,li,ionOnly}], b:[[i,j,order,cx?,cy?,ionOnly?]]} ; y up, bond length 1 */
+var HEXV=[[0,1],[0.866,0.5],[0.866,-0.5],[0,-1],[-0.866,-0.5],[-0.866,0.5]];
+function ringA(lbl,dx,dy){dx=dx||0;dy=dy||0;return HEXV.map(function(p,i){return {x:p[0]+dx,y:p[1]+dy,l:(lbl&&lbl[i])||''};});}
+function ringB(o,cx,cy,arom){o=o||0;cx=cx||0;cy=cy||0;var b=[];for(var i=0;i<6;i++){var dbl=arom!==false&&i%2===0;b.push(dbl?[o+i,o+(i+1)%6,2,cx,cy]:[o+i,o+(i+1)%6,1]);}return b;}
+function molSVG(d,ion,s,col){
+  var A=d.a.filter(function(x){return ion||!x.ionOnly;}),pad=0.75,fs=Math.max(9,0.66*s);
+  var xs=A.map(function(a){return a.x;}),ys=A.map(function(a){return a.y;});
+  var x0=Math.min.apply(null,xs)-pad,x1=Math.max.apply(null,xs)+pad,y0=Math.min.apply(null,ys)-pad,y1=Math.max.apply(null,ys)+pad;
+  function P(a){return [(a.x-x0)*s,(y1-a.y)*s];}
+  var out='';
+  d.b.forEach(function(b){
+    if(b[5]&&!ion)return;
+    var A1=d.a[b[0]],A2=d.a[b[1]],p1=P(A1),p2=P(A2),dx=p2[0]-p1[0],dy=p2[1]-p1[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,nx=-uy,ny=ux;
+    var l1=(ion&&A1.li)?A1.li:A1.l,l2=(ion&&A2.li)?A2.li:A2.l,c1=l1?0.42*s:0,c2=l2?0.42*s:0;
+    var q1=[p1[0]+ux*c1,p1[1]+uy*c1],q2=[p2[0]-ux*c2,p2[1]-uy*c2];
+    function ln(a,e){out+='<line x1="'+a[0].toFixed(1)+'" y1="'+a[1].toFixed(1)+'" x2="'+e[0].toFixed(1)+'" y2="'+e[1].toFixed(1)+'"/>';}
+    var ringD=b[2]===2&&b[3]!=null;
+    if(b[2]===2&&!ringD){var o=0.11*s;ln([q1[0]+nx*o,q1[1]+ny*o],[q2[0]+nx*o,q2[1]+ny*o]);ln([q1[0]-nx*o,q1[1]-ny*o],[q2[0]-nx*o,q2[1]-ny*o]);return;}
+    ln(q1,q2);
+    if(ringD){var cx0=(b[3]-x0)*s,cy0=(y1-b[4])*s,mx=(p1[0]+p2[0])/2,my=(p1[1]+p2[1])/2;if((cx0-mx)*nx+(cy0-my)*ny<0){nx=-nx;ny=-ny;}var o2=0.19*s,sh=0.17*L;
+      ln([q1[0]+nx*o2+ux*sh,q1[1]+ny*o2+uy*sh],[q2[0]+nx*o2-ux*sh,q2[1]+ny*o2-uy*sh]);}
+  });
+  var g='<g stroke="'+col+'" stroke-width="'+Math.max(1.2,s/9).toFixed(2)+'" stroke-linecap="round" fill="none">'+out+'</g>';
+  A.forEach(function(a){var lb=(ion&&a.li)?a.li:a.l;if(!lb)return;var p=P(a),ch=ion&&(a.li||a.ionOnly)&&/[⁺⁻+]/.test(lb);
+    g+='<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" text-anchor="middle" dominant-baseline="central" font-family="Arial,Helvetica,sans-serif" font-size="'+fs.toFixed(1)+'" font-weight="'+(ch?'700':'400')+'" fill="'+(ch?'var(--eqr)':col)+'" style="paint-order:stroke;stroke:var(--bg);stroke-width:3px;stroke-linejoin:round">'+lb+'</text>';});
+  return {w:(x1-x0)*s,h:(y1-y0)*s,svg:g};
+}
+function molInline(d,ion,s,col){var m=molSVG(d,ion,s,col);return '<svg width="'+m.w.toFixed(0)+'" height="'+m.h.toFixed(0)+'" viewBox="0 0 '+m.w.toFixed(1)+' '+m.h.toFixed(1)+'" aria-hidden="true">'+m.svg+'</svg>';}
+function chain(n,dx,dy){var a=[];for(var i=0;i<n;i++)a.push({x:(dx||0)+i*0.866,y:(dy||0)+(i%2)*0.5});var b=[];for(i=1;i<n;i++)b.push([i-1,i,1]);return {a:a,b:b};}
+var TYPES={hplc:{name:'HPLC',packed:true,lenUnit:'cm',lenScale:1e-2,hUnit:'µm',hScale:1e-6,uUnit:'mm/s',uScale:1e-3,r:{L:[3,25,0.5],H:[2,60],a:[1,2,0.002],k:[0.1,30],u:[0.2,5,0.05]}},
+ gc:{name:'GC',packed:false,lenUnit:'m',lenScale:1,hUnit:'mm',hScale:1e-3,uUnit:'cm/s',uScale:1e-2,r:{L:[5,100,1],H:[0.08,2],a:[1,1.5,0.001],k:[0.1,30],u:[10,80,1]}}};
+/* structures for compound pairs */
+function ringWith(subs,arom){var a=ringA(),b=ringB(0,0,0,arom);subs.forEach(function(s){var i=a.length,v=HEXV[s[0]],out=[v[0]*2,v[1]*2];a.push({x:out[0],y:out[1]});b.push([s[0],i,1]);if(s[1]==='Et'){var dir=[v[0],v[1]],q=[out[0]+0.866*(v[1]>=0?1:-1)*0.0+dir[0]*0.5+0.866,out[1]+dir[1]*0.5];a.push({x:out[0]+0.866,y:out[1]+0.5});b.push([i,i+1,1]);}});return {a:a,b:b};}
+var MOL={benzene:{n:'Benzene',d:ringWith([])},toluene:{n:'Toluene',d:ringWith([[0]])},ethylbenzene:{n:'Ethylbenzene',d:ringWith([[0,'Et']])},
+ mxylene:{n:'m-Xylene',d:ringWith([[0],[2]])},pxylene:{n:'p-Xylene',d:ringWith([[0],[3]])},oxylene:{n:'o-Xylene',d:ringWith([[0],[1]])},cyclohexane:{n:'Cyclohexane',d:ringWith([],false)}};
+var PAIRS={gc:[['mxylene','pxylene',1.02,4,'m- and p-xylene (nonpolar column): nearly identical boiling points'],['ethylbenzene','pxylene',1.04,4,'Ethylbenzene and p-xylene'],['cyclohexane','benzene',1.03,3,'Cyclohexane and benzene (boiling points 80.7 and 80.1 °C)'],['benzene','toluene',2.4,2,'Benzene and toluene: easy']],
+ hplc:[['mxylene','pxylene',1.03,5,'m- and p-xylene on C18: hard'],['oxylene','mxylene',1.07,4,'o- and m-xylene on C18'],['toluene','ethylbenzene',1.6,3,'Toluene and ethylbenzene: one extra CH₂'],['benzene','toluene',1.9,1.5,'Benzene and toluene']]};
+function D0(t){var g=t==='gc';return {type:t,L:g?30:15,H:g?0.3:10,a:g?1.02:1.03,k:g?4:5,u:g?35:1,q:1,pair:'0'};}
+var VALS={hplc:D0('hplc'),gc:D0('gc')},S=VALS.hplc,type='hplc',P=null,C=null,anim={t:0,hold:0};
+function compute(){var TT=TYPES[S.type],L=S.L*TT.lenScale,H=S.H*TT.hScale,N=L/H,u=S.u*TT.uScale,tM=L/u,kA=S.k,kB=S.k*S.a,tA=tM*(1+kA),tB=tM*(1+kB),rN=Math.sqrt(N),sA=tA/rN,sB=tB/rN;
+  var Rs=2*(tB-tA)/(4*sA+4*sB),fe=rN/4,fs=(S.a-1)/S.a,fk=kB/(1+kB);P={L:L,H:H,N:N,u:u,tM:tM,kA:kA,kB:kB,tA:tA,tB:tB,sA:sA,sB:sB,Rs:Rs,fe:fe,fs:fs,fk:fk,Rp:fe*fs*fk,q:S.q,a:S.a};
+  var t0=tA-5*sA,t1=tB+5*sB,n=1200,ys=[],i;for(i=0;i<=n;i++){var tt=t0+(t1-t0)*i/n;ys.push(gN(tt,tA,sA)+S.q*gN(tt,tB,sB));}
+  var pk=[];for(i=1;i<n;i++)if(ys[i]>ys[i-1]&&ys[i]>=ys[i+1])pk.push(i);P.valley=null;if(pk.length>=2){var a=pk[0],b=pk[pk.length-1],mn=Infinity;for(i=a;i<=b;i++)mn=Math.min(mn,ys[i]);P.valley=mn/Math.min(ys[a],ys[b])*100;}C=P;}
+function pairOf(){if(S.pair==='c')return null;return PAIRS[S.type][+S.pair];}
+function names(){var p=pairOf();return p?[MOL[p[0]].n,MOL[p[1]].n]:['A','B'];}
+function fmtT(s){if(s<120)return sig(s,3)+' s';if(s<7200)return sig(s/60,3)+' min';return sig(s/3600,3)+' h';}
+function fmtL(m){var t=TYPES[S.type];return sig(m/t.lenScale,3)+' '+t.lenUnit;}
+function fmtHH(m){var t=TYPES[S.type];return sig(m/t.hScale,3)+' '+t.hUnit;}
 function tUnit(){return P.tB>180?60:1;}
-function drawCharts(){
-  var tu=tUnit(),un=tu===60?'min':'s';
-  /* overview */
-  var ov=document.getElementById('over');clear(ov);
-  var W=540,H=70,PL=12,PR=12,T1=Math.max(P.tB+6*P.sB,P.tM*1.2)*1.05;
-  function Xo(t){return PL+t/T1*(W-PL-PR);}
-  var ymax=Math.max(gN(P.tA,P.tA,P.sA),P.q*gN(P.tB,P.tB,P.sB))*1.1;
-  var z0=P.tA-6*P.sA,z1=P.tB+6*P.sB;
-  ov.appendChild(el('rect',{x:Xo(z0),y:4,width:Math.max(3,Xo(z1)-Xo(z0)),height:H-24,fill:'var(--panel)',stroke:'var(--steel)','stroke-width':1}));
-  ov.appendChild(el('line',{x1:PL,y1:H-20,x2:W-PR,y2:H-20,'class':'ax'}));
-  var stp=niceStep(T1/tu,6);
-  for(var tt=0;tt<=T1/tu+1e-9;tt+=stp){ov.appendChild(el('text',{x:Xo(tt*tu),y:H-6,'text-anchor':'middle','class':'tk','font-size':11},sig(tt,3)));}
-  ov.appendChild(el('line',{x1:Xo(P.tM),y1:H-28,x2:Xo(P.tM),y2:H-20,stroke:'var(--muted)'}));
-  ov.appendChild(el('text',{x:Xo(P.tM)+3,y:H-24,'font-size':10,fill:'var(--muted)'},'dead time'));
-  var d='',n=700,cur=anim.t;
-  for(var i=0;i<=n;i++){var t=T1*i/n;if(t>cur)break;var y=gN(t,P.tA,P.sA)+P.q*gN(t,P.tB,P.sB);d+=(d?'L':'M')+Xo(t).toFixed(1)+' '+(H-20-Math.min(1,y/ymax)*(H-30)).toFixed(1);}
-  if(d)ov.appendChild(el('path',{d:d,fill:'none',stroke:'var(--navy)','stroke-width':1.6}));
-  if(cur<T1)ov.appendChild(el('line',{x1:Xo(cur),y1:4,x2:Xo(cur),y2:H-20,stroke:'var(--alert)','stroke-width':1.2}));
-  ov.appendChild(el('text',{x:PL,y:13,'font-size':11,fill:'var(--muted)'},'Whole run (time in '+un+'). The boxed part is enlarged below.'));
-  /* zoom */
-  var zs=document.getElementById('zoom');clear(zs);
-  var ZW=540,ZH=300,ZL=46,ZR=14,ZT=28,ZB=58;
-  function X(t){return ZL+(t-z0)/(z1-z0)*(ZW-ZL-ZR);}
-  var m=600,ts=[],ya=[],yb=[],ysum=[];
-  for(i=0;i<=m;i++){var t2=z0+(z1-z0)*i/m;ts.push(t2);var a=gN(t2,P.tA,P.sA),b=P.q*gN(t2,P.tB,P.sB);ya.push(a);yb.push(b);ysum.push(a+b);}
-  var top=Math.max.apply(null,ysum)*1.15;
-  function Y(v){return ZH-ZB-v/top*(ZH-ZT-ZB);}
-  var st2=niceStep((z1-z0)/tu,6),first=Math.ceil(z0/tu/st2)*st2,dec=Math.max(0,-Math.floor(Math.log10(st2)+1e-9));
-  for(tt=first;tt<=z1/tu+1e-9;tt+=st2){zs.appendChild(el('line',{x1:X(tt*tu),y1:ZT,x2:X(tt*tu),y2:ZH-ZB,'class':'gl'}));zs.appendChild(el('text',{x:X(tt*tu),y:ZH-ZB+36,'text-anchor':'middle','class':'tk'},tt.toFixed(dec)));}
-  zs.appendChild(el('line',{x1:ZL,y1:ZH-ZB,x2:ZW-ZR,y2:ZH-ZB,'class':'ax'}));
-  zs.appendChild(el('text',{x:(ZL+ZW-ZR)/2,y:ZH-2,'text-anchor':'middle','class':'axt'},'Time ('+un+')'));
-  zs.appendChild(el('text',{transform:'translate(16,'+((ZT+ZH-ZB)/2)+') rotate(-90)','text-anchor':'middle','class':'axt'},'Detector signal'));
-  function path(arr,lim){var dd='';for(var j=0;j<arr.length;j++){if(ts[j]>lim)break;dd+=(dd?'L':'M')+X(ts[j]).toFixed(1)+' '+Y(arr[j]).toFixed(1);}return dd;}
-  var shown=Math.min(cur,z1+1);
-  zs.appendChild(el('path',{d:path(ya,Infinity),fill:'none',stroke:'var(--a)','stroke-width':1.6,'stroke-dasharray':'6 4',opacity:.75}));
-  zs.appendChild(el('path',{d:path(yb,Infinity),fill:'none',stroke:'var(--b)','stroke-width':1.6,'stroke-dasharray':'6 4',opacity:.75}));
-  var ds=path(ysum,shown);if(ds)zs.appendChild(el('path',{d:ds,fill:'none',stroke:'var(--navy)','stroke-width':3}));
-  if(cur>z0&&cur<z1)zs.appendChild(el('line',{x1:X(cur),y1:ZT,x2:X(cur),y2:ZH-ZB,stroke:'var(--alert)','stroke-width':1.2}));
-  /* widths and labels */
-  [[P.tA,P.sA,'var(--a)',8,'A'],[P.tB,P.sB,'var(--b)',18,'B']].forEach(function(w){
-    var y=ZH-ZB+w[3]+6,xl=Math.max(ZL,X(w[0]-2*w[1])),xr=Math.min(ZW-ZR,X(w[0]+2*w[1]));
-    zs.appendChild(el('line',{x1:xl,y1:y,x2:xr,y2:y,stroke:w[2],'stroke-width':2.2}));
-  });
-  var ia=Math.round((P.tA-z0)/(z1-z0)*m),ib=Math.round((P.tB-z0)/(z1-z0)*m);
-  zs.appendChild(el('text',{x:X(P.tA)-5,y:Math.max(ZT-6,Y(ysum[ia])-8),'text-anchor':'end','font-size':12.5,'font-weight':'bold',fill:'var(--a)','class':'halo'},'A, '+sig(P.tA/tu,4)+' '+un));
-  zs.appendChild(el('text',{x:X(P.tB)+5,y:Math.max(ZT-6,Y(ysum[ib])-8),'text-anchor':'start','font-size':12.5,'font-weight':'bold',fill:'var(--b)','class':'halo'},'B, '+sig(P.tB/tu,4)+' '+un));
-  if(cur<z0)zs.appendChild(el('text',{x:(ZL+ZW-ZR)/2,y:ZT+(ZH-ZT-ZB)*0.55,'text-anchor':'middle','font-size':13,fill:'var(--muted)','class':'halo'},'Waiting for the bands to reach the detector…'));
+function stat(){var r=Math.round(P.Rs*100)/100;return r<1?['Overlapping','var(--alert)']:(r<1.5?['Partly resolved','var(--warn)']:['Baseline resolved','var(--good)']);}
+APP.live=function(){var s=stat();$('live').innerHTML='<div class="l1"><span class="h">Rs = '+P.Rs.toFixed(2)+'</span><span class="sub">'+names().join(' / ')+'</span><span class="st" style="color:'+s[1]+'">'+s[0]+'</span></div>'
+  +'<div class="l2"><span>Rs ≈ √N/4 × (α−1)/α × k<sub>B</sub>/(1+k<sub>B</sub>) = '+P.fe.toFixed(1)+' × '+P.fs.toFixed(4)+' × '+P.fk.toFixed(3)+' = '+P.Rp.toFixed(2)+'</span><span>run ≈ '+fmtT(P.tB+3*P.sB)+'</span></div>';};
+APP.tabVals=function(){tabVal('N','N '+Math.round(P.N/1000)+'k');tabVal('S','α '+S.a.toFixed(3));tabVal('K','k '+sig(P.kB,2));tabVal('F','u '+S.u);};
+function sl(b,id,label,unitf,log,eq,fmt){var r=TYPES[S.type].r[id];return ctlSlider(b,{id:id,label:label,min:r[0],max:r[1],step:r[2]||0.01,log:log,get:function(){return S[id];},set:function(v){S[id]=v;if(id==='a'||id==='k')S.pair='c';},fmt:fmt||function(v){return sig(v,3)+(unitf?' '+unitf():'');},eq:eq});}
+APP.groups=function(){var TT=TYPES[S.type];return [
+ {id:'N',tab:'Efficiency',title:'Efficiency, N',render:function(b){
+   sl(b,'L','Column length, L',function(){return TT.lenUnit;},false,function(){return 'N = '+R_('L')+'/H &nbsp; R<sub>s</sub> ∝ √N ∝ √'+R_('L')+'<br>'+N_('N = '+fmtL(P.L)+' / '+fmtHH(P.H)+' = '+Math.round(P.N).toLocaleString('en-US')+'; √N/4 = '+P.fe.toFixed(1));});
+   sl(b,'H','Plate height, H',function(){return TT.hUnit;},true,function(){return 'N = L/'+R_('H')+N_('  (smaller H: smaller particles, better packing, optimum flow; see the Van Deemter explorer)');});
+   ctlNote(b,'Doubling the column length doubles N but raises R<sub>s</sub> only by √2 = 1.41, and doubles the run time.');}},
+ {id:'S',tab:'Selectivity',title:'Selectivity, α',render:function(b){
+   ctlSelect(b,{id:'pair',label:'Compound pair (typical values)',options:PAIRS[S.type].map(function(p,i){return [String(i),p[4]];}).concat([['c','Your own A and B (set α and k)']]),get:function(){return S.pair;},set:function(v){S.pair=v;var p=pairOf();if(p){S.a=p[2];S.k=p[3];}},rebuild:true});
+   var p=pairOf();if(p){var d=document.createElement('div');d.className='row';d.innerHTML='<div style="display:flex;gap:16px;align-items:flex-end">'+[0,1].map(function(i){return '<div style="text-align:center;color:var(--'+(i?'b':'a')+');font-size:.8rem">'+molInline(MOL[p[i]].d,false,10,'var(--'+(i?'b':'a')+')')+'<br><b>'+MOL[p[i]].n+'</b></div>';}).join('')+'</div>';b.appendChild(d);}
+   sl(b,'a','Selectivity, α = k<sub>B</sub>/k<sub>A</sub>',null,false,function(){return '('+R_('α')+' − 1)/'+R_('α')+' = '+N_('('+S.a.toFixed(3)+' − 1)/'+S.a.toFixed(3)+' = '+P.fs.toFixed(4))+'<br>k<sub>B</sub> = '+R_('α')+'·k<sub>A</sub>'+N_(' = '+S.a.toFixed(3)+' × '+sig(S.k,3)+' = '+sig(P.kB,3));},function(v){return v.toFixed(3);});
+   ctlNote(b,'α reflects how differently the two compounds interact with the stationary phase. Change it with a different stationary phase, mobile phase composition (HPLC) or temperature.');}},
+ {id:'K',tab:'Retention',title:'Retention, k',render:function(b){
+   sl(b,'k','Retention factor of A, k<sub>A</sub>',null,true,function(){return 'k<sub>B</sub>/(1 + k<sub>B</sub>), k<sub>B</sub> = α·'+R_('k<sub>A</sub>')+'<br>'+N_('= '+sig(P.kB,3)+'/(1 + '+sig(P.kB,3)+') = '+P.fk.toFixed(3)+'; t<sub>R</sub> = t<sub>M</sub>(1 + k)');});
+   ctlNote(b,'Raise k with a weaker mobile phase (HPLC) or a lower temperature (GC). Above k ≈ 10, k/(1+k) is already near 1, so more retention mostly just lengthens the run.');}},
+ {id:'F',tab:'Flow',title:'Flow and sample',render:function(b){
+   sl(b,'u','Linear velocity, u',function(){return TT.uUnit;},false,function(){return 't<sub>M</sub> = L/'+R_('u')+N_(' = '+fmtT(P.tM)+'; t<sub>R,B</sub> = '+fmtT(P.tB));});
+   ctlSlider(b,{id:'q',label:'Amount of B compared with A',min:0.1,max:10,log:true,get:function(){return S.q;},set:function(v){S.q=v;},fmt:function(v){return sig(v,2)+'×';},eq:function(){return 'area<sub>B</sub> = '+R_('q')+'·area<sub>A</sub>'+N_(' (R<sub>s</sub> doesn’t change, but a small peak beside a big one is harder to see)');}});
+   ctlNote(b,'Here u changes only the time scale. In a real column it also changes H (see the Van Deemter explorer).');}}];};
+APP.S=true;APP.reset=function(){VALS[S.type]=D0(S.type);S=VALS[S.type];compute();if(V3)buildColumn();};APP.compute=compute;
+APP.init=function(){var sel=$('ctype');sel.addEventListener('change',function(){type=sel.value;S=VALS[type];compute();buildPanel();if(V3)buildColumn();anim.t=0;microInit&&cm&&microInit();update(true);});};
+APP.pal=['a','b'];
+/* ===== chromatogram (overview + enlarged pair with structures) ===== */
+function drawChrom(){var svg=$('chsv');if(!$('v-chrom').classList.contains('on'))return;var wh=svgSize(svg),W=wh[0],H=wh[1],tu=tUnit(),un=tu===60?'min':'s';
+  var OH=Math.max(46,H*0.17),PL=12,PR=12,T1=Math.max(P.tB+6*P.sB,P.tM*1.2)*1.04;function Xo(t){return PL+t/T1*(W-PL-PR);}
+  var hmax=Math.max(gN(P.tA,P.tA,P.sA),P.q*gN(P.tB,P.tB,P.sB))*1.1,z0=P.tA-6*P.sA,z1=P.tB+6*P.sB,ob=OH-14;
+  svg.appendChild(el('rect',{x:Xo(z0),y:4,width:Math.max(3,Xo(z1)-Xo(z0)),height:ob-4,fill:'var(--panel)',stroke:'var(--steel)'}));svg.appendChild(el('line',{x1:PL,y1:ob,x2:W-PR,y2:ob,'class':'ax'}));
+  var d='';for(var i=0;i<=500;i++){var t=T1*i/500,y=gN(t,P.tA,P.sA)+P.q*gN(t,P.tB,P.sB);d+=(d?'L':'M')+Xo(t).toFixed(1)+' '+(ob-Math.min(1,y/hmax)*(ob-8)).toFixed(1);}svg.appendChild(el('path',{d:d,fill:'none',stroke:'var(--navy)','stroke-width':1.4}));
+  svg.appendChild(el('line',{x1:Xo(P.tM),y1:ob-10,x2:Xo(P.tM),y2:ob,stroke:'var(--muted)'}));svg.appendChild(el('text',{x:Xo(P.tM)+3,y:ob-2,'font-size':10,fill:'var(--muted)'},'t'+String.fromCharCode(8344)));
+  svg.appendChild(el('text',{x:PL,y:OH-1,'font-size':10,fill:'var(--muted)'},'whole run, 0–'+sig(T1/tu,3)+' '+un+'; boxed part enlarged below'));
+  var p=pairOf(),cardH=p?(W<480?62:84):22,ZT=OH+10+cardH,ZB=36;function X(t){return PL+(t-z0)/(z1-z0)*(W-PL-PR);}
+  var m=700,ts=[],ya=[],yb=[],ys=[];for(i=0;i<=m;i++){var t2=z0+(z1-z0)*i/m;ts.push(t2);var a=gN(t2,P.tA,P.sA),b2=P.q*gN(t2,P.tB,P.sB);ya.push(a);yb.push(b2);ys.push(a+b2);}
+  var top=Math.max.apply(null,ys)*1.06;function Y(v){return H-ZB-v/top*(H-ZT-ZB);}
+  var st=niceStep((z1-z0)/tu,W<420?4:6),dec=Math.max(0,-Math.floor(Math.log10(st)+1e-9));for(var tt=Math.ceil(z0/tu/st)*st;tt<=z1/tu+1e-9;tt+=st){svg.appendChild(el('line',{x1:X(tt*tu),y1:ZT,x2:X(tt*tu),y2:H-ZB,'class':'gl'}));svg.appendChild(el('text',{x:X(tt*tu),y:H-ZB+15,'text-anchor':'middle','class':'tk'},tt.toFixed(dec)));}
+  svg.appendChild(el('line',{x1:PL,y1:H-ZB,x2:W-PR,y2:H-ZB,'class':'ax'}));svg.appendChild(el('text',{x:(PL+W-PR)/2,y:H-3,'text-anchor':'middle','class':'axt'},'Time ('+un+')'));
+  function path(arr){var dd='';for(var j=0;j<arr.length;j++)dd+=(dd?'L':'M')+X(ts[j]).toFixed(1)+' '+Y(arr[j]).toFixed(1);return dd;}
+  svg.appendChild(el('path',{d:path(ya),fill:'none',stroke:'var(--a)','stroke-width':1.5,'stroke-dasharray':'6 4'}));svg.appendChild(el('path',{d:path(yb),fill:'none',stroke:'var(--b)','stroke-width':1.5,'stroke-dasharray':'6 4'}));svg.appendChild(el('path',{d:path(ys),fill:'none',stroke:'var(--navy)','stroke-width':2.6}));
+  [[P.tA,P.sA,'var(--a)',ZB-22],[P.tB,P.sB,'var(--b)',ZB-14]].forEach(function(w){var y=H-w[3];svg.appendChild(el('line',{x1:Math.max(PL,X(w[0]-2*w[1])),y1:y,x2:Math.min(W-PR,X(w[0]+2*w[1])),y2:y,stroke:w[2],'stroke-width':2}));});
+  var nm=names();[[P.tA,0,'var(--a)'],[P.tB,1,'var(--b)']].forEach(function(q,i){var x=X(q[0]),idx=Math.round((q[0]-z0)/(z1-z0)*m),yt=Y(ys[idx]),cxp=clamp(x+(i?28:-28),40,W-40);
+    if(p){var mm=molSVG(MOL[p[i]].d,false,W<480?8.5:11,q[2]),sc=Math.min(1,(cardH-16)/mm.h),g=el('g',{transform:'translate('+(cxp-mm.w*sc/2).toFixed(1)+','+(OH+8).toFixed(1)+') scale('+sc.toFixed(3)+')'});g.innerHTML=mm.svg;svg.appendChild(g);}
+    svg.appendChild(el('text',{x:cxp,y:OH+6+cardH,'text-anchor':'middle','font-size':11,'font-weight':'bold',fill:q[2],'class':'halo'},nm[i]+', '+sig(q[0]/tu,4)+' '+un));
+    svg.appendChild(el('line',{x1:cxp,y1:OH+10+cardH,x2:x,y2:Math.max(yt-3,ZT+2),stroke:q[2],'stroke-dasharray':'2 2'}));});
 }
-
-/* readouts and summary */
-function status(){var r=Math.round(P.Rs*100)/100;if(r<1)return ['Overlapping','var(--alert)'];if(r<1.5)return ['Partly resolved','var(--warn)'];return ['Baseline resolved','var(--good)'];}
-function updateText(){
-  var st=status();
-  document.getElementById('Rbig').textContent='Rs = '+P.Rs.toFixed(2);
-  var se=document.getElementById('Rst');se.textContent=st[0];se.style.color=st[1];
-  document.getElementById('Rsub').innerHTML='N = '+Math.round(P.N).toLocaleString('en-US')+' plates, α = '+P.a.toFixed(3)+', k<sub>B</sub> = '+sig(P.kB,3)+', run time about '+fmtT(P.tB+3*P.sB);
-  document.getElementById('eqnum').innerHTML='Right now: R<sub>s</sub> = <b>'+P.Rs.toFixed(2)+'</b> ≈ '+P.fe.toFixed(1)+' × '+P.fs.toFixed(4)+' × '+P.fk.toFixed(3)+' = '+P.Rp.toFixed(2);
-  termEls.N.innerHTML='N = '+Math.round(P.N).toLocaleString('en-US')+', √N/4 = '+P.fe.toFixed(1);
-  termEls.S.innerHTML='(α − 1)/α = '+P.fs.toFixed(4);
-  termEls.K.innerHTML='k<sub>B</sub> = '+sig(P.kB,3)+', k<sub>B</sub>/(1 + k<sub>B</sub>) = '+P.fk.toFixed(3);
-  termEls.F.innerHTML='t<sub>M</sub> = '+fmtT(P.tM)+', run time about '+fmtT(P.tB+3*P.sB);
-  document.getElementById('rN').textContent=Math.round(P.N).toLocaleString('en-US');
-  document.getElementById('rTM').textContent=fmtT(P.tM);
-  document.getElementById('rTR').textContent=fmtT(P.tA)+' and '+fmtT(P.tB);
-  document.getElementById('rW').textContent=fmtT(4*P.sA)+' and '+fmtT(4*P.sB);
-  document.getElementById('rV').textContent=P.valley==null?'no valley':(P.valley<1?'below 1%':(P.valley<10?P.valley.toFixed(1):Math.round(P.valley))+'% of the smaller peak');
-  document.getElementById('rK').textContent=sig(P.kA,3)+' and '+sig(P.kB,3);
-  var s='R<sub>s</sub> = '+P.Rs.toFixed(2)+': ';
-  if(P.valley==null)s+='the two peaks merge into one band, so you would see a single peak (or a peak with a shoulder) where there are really two compounds. ';
-  else if(Math.round(P.Rs*100)/100<1.5)s+='a valley appears between the peaks, but the signal only falls to '+(P.valley<10?P.valley.toFixed(1):Math.round(P.valley))+'% of the smaller peak, so the areas overlap and can’t be measured cleanly. ';
-  else s+='the signal returns to the baseline between the peaks, so each one can be measured on its own. ';
-  var weakest=[['efficiency',P.fe/80],['selectivity',P.fs/0.1],['retention',P.fk/0.8]].sort(function(a,b){return a[1]-b[1];})[0][0];
-  if(Math.round(P.Rs*100)/100<1.5)s+={efficiency:'The column doesn’t have enough plates for such similar compounds; see the cards below for options.',selectivity:'The compounds are very similar (α close to 1), so the biggest gains come from changing the chemistry to raise α.',retention:'The compounds are barely retained (k is small), so they don’t spend enough time in the stationary phase to separate. Raising k helps a lot here.'}[weakest];
-  if(P.q<0.3||P.q>3.3)s+=' Note how a small peak next to a large one is harder to see even at the same R<sub>s</sub>.';
-  document.getElementById('sum').innerHTML=s;
-  drawFactors();
-}
-
-/* three ways to reach Rs = 1.5 */
-var TARGET=1.5;function low(){return Math.round(P.Rs*100)/100<TARGET;}
-function drawFactors(){
-  var box=document.getElementById('factors'),rN=Math.sqrt(P.N),R=TARGET+0.004,kA=P.kA,a=P.a,TT=TYPES[type];
-  var Nreq=P.N*Math.pow(R/P.Rs,2),Lreq=Nreq*P.H,Hreq=P.L/Nreq;
-  var aReq=(2*R+R*kA+(rN/2)*kA)/(kA*(rN/2-R));
-  var den=(rN/2)*(a-1)-R*(1+a),kReq=den>0?2*R/den:Infinity;
-  var cards=[
-    {key:'E',title:'Efficiency: √N/4 = '+P.fe.toFixed(1),col:'var(--fE)',g:clamp(P.fe/120,0,1),
-     text:'R<sub>s</sub> grows only with the square root of N. To reach 1.5 you need N = '+Math.round(Nreq).toLocaleString('en-US')+'.',
-     opts:[{lab:'Use a longer column: L = '+fmtL(Lreq),cost:'The run gets '+sig(Lreq/P.L,3)+'× longer.',ok:low()&&Lreq/TT.lenScale<=SPEC[0].r[type][1],apply:function(){setVal('L',Lreq/TT.lenScale);}},
-           {lab:'Use a more efficient column: H = '+fmtH(Hreq),cost:'Same run time; needs smaller particles (HPLC) or a narrower column (GC).',ok:low()&&Hreq/TT.hScale>=SPEC[1].r[type][0],apply:function(){setVal('H',Hreq/TT.hScale);}}]},
-    {key:'S',title:'Selectivity: (α − 1)/α = '+P.fs.toFixed(4),col:'var(--fS)',g:clamp(P.fs/0.2,0,1),
-     text:'The most powerful factor: a small increase in α makes a big difference when α is close to 1.',
-     opts:[{lab:aReq>1?'Raise α to '+aReq.toFixed(3):'Not possible with this N and k',cost:'No extra time; needs a different stationary phase, mobile phase or temperature.',ok:low()&&aReq>1&&aReq<=SPEC[2].r[type][1],apply:function(){setVal('a',aReq);}}]},
-    {key:'K',title:'Retention: k/(1 + k) = '+P.fk.toFixed(3),col:'var(--fK)',g:clamp(P.fk,0,1),
-     text:'Helps a lot while k is small, but k/(1 + k) can never exceed 1, so above k ≈ 10 there is little left to gain.',
-     opts:[{lab:isFinite(kReq)?'Raise k_A to '+sig(kReq,3):'Not possible: even very large k can’t reach 1.5 here',cost:isFinite(kReq)?('The run gets '+sig((1+a*kReq)/(1+P.kB),3)+'× longer.'):'Improve N or α instead.',ok:low()&&isFinite(kReq)&&kReq<=SPEC[3].r[type][1],apply:function(){setVal('k',kReq);}}]}
-  ];
-  box.innerHTML='';
-  cards.forEach(function(c){
-    var d=document.createElement('div');d.className='fac';
-    d.innerHTML='<h3 style="color:'+c.col+'">'+c.title+'</h3><div class="gauge"><span style="width:'+(c.g*100).toFixed(1)+'%;background:'+c.col+'"></span></div><p>'+c.text+'</p>';
-    if(!low()){var pp=document.createElement('p');pp.className='cost';pp.innerHTML='Already at R<sub>s</sub> ≥ 1.5. Make the separation harder (for example, lower α) to see how this factor helps.';d.appendChild(pp);}
-    else c.opts.forEach(function(o){
-      var p=document.createElement('p');p.innerHTML='<b>'+o.lab.replace('k_A','k<sub>A</sub>')+'</b><br><span class="cost">'+o.cost+'</span>';d.appendChild(p);
-      var b=document.createElement('button');b.type='button';b.textContent='Try it';b.disabled=!o.ok;if(!o.ok&&low())b.title='Outside the range of this page’s sliders';
-      b.addEventListener('click',function(){o.apply();update(true);});d.appendChild(b);
-    });
-    box.appendChild(d);
-  });
-}
-
+function drawImprove(){if(!$('v-imp').classList.contains('on'))return;var box=$('impb'),rN=Math.sqrt(P.N),R=1.504,kA=P.kA,a=P.a,TT=TYPES[S.type],r=TT.r,low=Math.round(P.Rs*100)/100<1.5;
+  var Nreq=P.N*Math.pow(R/P.Rs,2),Lreq=Nreq*P.H,Hreq=P.L/Nreq,aReq=(2*R+R*kA+(rN/2)*kA)/(kA*(rN/2-R)),den=(rN/2)*(a-1)-R*(1+a),kReq=den>0?2*R/den:Infinity;
+  var cards=[{t:'Efficiency: √N/4 = '+P.fe.toFixed(1),c:'var(--c0)',g:clamp(P.fe/120,0,1),x:'R<sub>s</sub> grows only as √N. To reach 1.5 you need N = '+Math.round(Nreq).toLocaleString('en-US')+'.',
+     o:[['Longer column: L = '+fmtL(Lreq),'Run gets '+sig(Lreq/P.L,3)+'× longer.',Lreq/TT.lenScale<=r.L[1],function(){S.L=Lreq/TT.lenScale;}],['More efficient column: H = '+fmtHH(Hreq),'Same run time; smaller particles (HPLC) or a narrower column (GC).',Hreq/TT.hScale>=r.H[0],function(){S.H=Hreq/TT.hScale;}]]},
+    {t:'Selectivity: (α−1)/α = '+P.fs.toFixed(4),c:'var(--c3)',g:clamp(P.fs/0.2,0,1),x:'The most powerful factor when α is close to 1.',o:[[aReq>1?'Raise α to '+aReq.toFixed(3):'Not possible at this N and k','No extra time; needs different chemistry (stationary phase, mobile phase, temperature).',aReq>1&&aReq<=r.a[1],function(){S.a=aReq;S.pair='c';}]]},
+    {t:'Retention: k/(1+k) = '+P.fk.toFixed(3),c:'var(--c4)',g:clamp(P.fk,0,1),x:'Helps while k is small; k/(1+k) can never exceed 1.',o:[[isFinite(kReq)?'Raise k<sub>A</sub> to '+sig(kReq,3):'Not possible: even huge k can’t reach 1.5',isFinite(kReq)?'Run gets '+sig((1+a*kReq)/(1+P.kB),3)+'× longer.':'Improve N or α instead.',isFinite(kReq)&&kReq<=r.k[1],function(){S.k=kReq;S.pair='c';}]]}];
+  box.innerHTML='';cards.forEach(function(c){var d=document.createElement('div');d.className='card';d.innerHTML='<h3 style="color:'+c.c+'">'+c.t+'</h3><div class="gauge"><span style="width:'+(c.g*100).toFixed(0)+'%;background:'+c.c+'"></span></div><p>'+c.x+'</p>';
+    if(!low){d.innerHTML+='<p class="cost">Already baseline resolved. Make it harder (for example, lower α) to see how this factor helps.</p>';}
+    else c.o.forEach(function(o){var p=document.createElement('p');p.innerHTML='<b>'+o[0]+'</b><br><span class="cost">'+o[1]+'</span>';d.appendChild(p);var bt=document.createElement('button');bt.type='button';bt.className='btn';bt.textContent='Try it';if(!o[2]){bt.disabled=true;bt.title='Outside this page’s slider range';}bt.onclick=function(){o[3]();compute();buildPanel();update(true);};d.appendChild(bt);});
+    box.appendChild(d);});}
+APP.views=[
+ {id:'chrom',label:'Chromatogram',draw:drawChrom},
+ {id:'col',label:'Column',enter:function(){init3D();resize3D();render3D(0,false);},resize:function(){resize3D();},reset:function(){anim.t=0;},
+  step:function(dt){var dur=9;if(anim.hold>0){anim.hold-=dt;if(anim.hold<=0)anim.t=0;}else{anim.t+=dt*(P.tB+6*P.sB)/dur;if(anim.t>=P.tB+6*P.sB){anim.t=P.tB+6*P.sB;anim.hold=2.5;}}render3D(dt,true);},draw:function(again){if(!again)render3D(0,false);clockText();}},
+ {id:'mol',label:'Close-up',enter:function(){if(sizeMicro()){microInit();microDraw();}$('mcap').innerHTML=microCap();},resize:function(){if(sizeMicro()){microInit();}},reset:function(){if(cm&&sizeMicro())microInit();},
+  step:function(dt){microStep(dt);},draw:function(){if(cm)microDraw();$('mcap').innerHTML=microCap();}},
+ {id:'imp',label:'Improve it',draw:drawImprove},
+ {id:'nums',label:'Numbers',draw:function(){if(!$('v-nums').classList.contains('on'))return;var nm=names(),h='<table>';function r(a,b){h+='<tr><td>'+a+'</td><td>'+b+'</td></tr>';}
+   r('Plates, N = L/H',Math.round(P.N).toLocaleString('en-US'));r('Dead time, t<sub>M</sub> = L/u',fmtT(P.tM));r('k of '+nm[0]+' / '+nm[1],sig(P.kA,3)+' / '+sig(P.kB,3));r('t<sub>R</sub> = t<sub>M</sub>(1+k)',fmtT(P.tA)+' / '+fmtT(P.tB));
+   r('Base widths, W = 4t<sub>R</sub>/√N',fmtT(4*P.sA)+' / '+fmtT(4*P.sB));r('R<sub>s</sub> = 2(t<sub>B</sub> − t<sub>A</sub>)/(W<sub>A</sub> + W<sub>B</sub>)',P.Rs.toFixed(3));r('Purnell estimate',P.Rp.toFixed(3));r('Signal at the valley',P.valley==null?'no valley':(P.valley<1?'below 1%':Math.round(P.valley)+'% of the smaller peak'));
+   $('nmr').innerHTML=h+'</table>';}}];
+function clockText(){var tu=tUnit(),c=$('clock');if(c)c.textContent='Run time: '+sig(Math.min(anim.t,P.tB+6*P.sB)/tu,3)+' '+(tu===60?'min':'s');}
+APP.theme=function(){if(V3)buildColumn();};
 /* 3D view */
 var c3=document.getElementById('c3'),V3=null,CAM0={yaw:-0.18,pitch:0.32,dist:34},cam={yaw:CAM0.yaw,pitch:CAM0.pitch,dist:CAM0.dist};
-var pal={};function readPal(){var cs=getComputedStyle(document.documentElement);['ink','navy','muted','bg','grid','a','b','sta','film','support','partEdge','panel'].forEach(function(k){pal[k]=cs.getPropertyValue('--'+k).trim();});}
-readPal();
+
 function hexOf(css){var c=document.createElement('canvas').getContext('2d');c.fillStyle=css;var h=c.fillStyle;if(h[0]==='#')return parseInt(h.slice(1),16);var m=h.match(/\d+/g);return (m[0]<<16)|(m[1]<<8)|(+m[2]);}
 function fail3D(){c3.style.display='none';var f=document.createElement('p');f.className='fallback';f.textContent='The 3D view needs WebGL, which this browser doesn’t provide. Everything else on the page still works.';c3.parentNode.insertBefore(f,c3);}
 function init3D(){
@@ -416,8 +385,8 @@ function buildColumn(){
   var det=new THREE.Mesh(new THREE.BoxGeometry(1.6,2.6,2.6),new THREE.MeshStandardMaterial({color:dark?0x52637a:0x8fa3b8,roughness:0.5}));det.position.set(L/2+0.85,0,0);col.add(det);
   V3.det=det;
   var inj=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,1.2,20).rotateZ(-Math.PI/2),new THREE.MeshStandardMaterial({color:dark?0x52637a:0x8fa3b8}));inj.position.set(-L/2-0.6,0,0);col.add(inj);
-  V3.cA=new THREE.Color(hexOf(pal.a));V3.cB=new THREE.Color(hexOf(pal.b));
-  document.getElementById('cap3').textContent=(TT.packed?'HPLC column packed with particles':'Capillary GC column; the orange layer is the stationary phase film')+'. Both compounds start together at the injector. B lags behind because it spends more time in the stationary phase, while both bands slowly widen. Whether they are separated by the time they reach the detector is what resolution measures.';
+  V3.cA=new THREE.Color(hexOf(PAL.a));V3.cB=new THREE.Color(hexOf(PAL.b));
+  var _cap3=(TT.packed?'HPLC column packed with particles':'Capillary GC column; the orange layer is the stationary phase film')+'. Both compounds start together at the injector. B lags behind because it spends more time in the stationary phase, while both bands slowly widen. Whether they are separated by the time they reach the detector is what resolution measures.';
 }
 function resize3D(){if(!V3)return;var w=c3.clientWidth,h=c3.clientHeight;if(!w||!h)return;V3.R.setSize(w,h,false);V3.camera.aspect=w/h;V3.camera.updateProjectionMatrix();}
 function placeCam(){var c=V3.camera,d=cam.dist*Math.max(1,1.5/c.aspect);c.position.set(d*Math.cos(cam.pitch)*Math.sin(cam.yaw),d*Math.sin(cam.pitch),d*Math.cos(cam.pitch)*Math.cos(cam.yaw));c.lookAt(0,0,0);}
@@ -454,8 +423,8 @@ function render3D(dt,moving){
 function clockText(){var tu=tUnit();document.getElementById('clock').textContent='Run time: '+sig(Math.min(anim.t,P.tB+6*P.sB)/tu,3)+' '+(tu===60?'min':'s');}
 
 /* molecular close-up */
-var cm=document.getElementById('cm'),cx=cm.getContext('2d'),CW=600,CH=300,ms={};
-function sizeMicro(){var r=cm.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);CW=Math.max(320,r.width);cm.width=Math.round(CW*d);cm.height=Math.round(CH*d);cx.setTransform(d,0,0,d,0,0);}
+var cm=null,cx=null,CW=600,CH=300,ms={};
+function sizeMicro(){cm=$('cm');cx=cm.getContext('2d');var r=cm.getBoundingClientRect();if(!r.width||!r.height)return false;var d=Math.min(2,window.devicePixelRatio||1);CH=clamp(r.height,250,330);if(r.height/CH>1.25)CH=r.height/1.25;var sc=r.height/CH;CW=r.width/sc;cm.width=Math.round(r.width*d);cm.height=Math.round(r.height*d);cx.setTransform(d*sc,0,0,d*sc,0,0);return true;}
 function exag(){return document.getElementById('exag').checked;}
 function microK(){var kA=P.kA,a=exag()?1+10*(P.a-1):P.a;return {kA:kA,kB:kA*a,a:a};}
 var TM_=0.045;
@@ -493,63 +462,28 @@ function profile(xs,color,base,hgt,mx){
 function microDraw(){
   cx.clearRect(0,0,CW,CH);
   var off=CW*0.45-ms.mean;
-  cx.fillStyle=pal.support;cx.fillRect(0,ms.top-10,CW,8);
-  cx.fillStyle=pal.film;cx.fillRect(0,ms.surf,CW,ms.thick);
-  cx.fillStyle=pal.support;cx.fillRect(0,ms.surf+ms.thick,CW,CH-ms.surf-ms.thick);
-  cx.strokeStyle=pal.partEdge;cx.lineWidth=1;cx.beginPath();for(var hx=((off%40)+40)%40-40;hx<CW+40;hx+=40){cx.moveTo(hx,CH-4);cx.lineTo(hx+16,ms.surf+ms.thick+6);}cx.stroke();
+  cx.fillStyle=PAL.support;cx.fillRect(0,ms.top-10,CW,8);
+  cx.fillStyle=PAL.film;cx.fillRect(0,ms.surf,CW,ms.thick);
+  cx.fillStyle=PAL.support;cx.fillRect(0,ms.surf+ms.thick,CW,CH-ms.surf-ms.thick);
+  cx.strokeStyle=PAL.partEdge;cx.lineWidth=1;cx.beginPath();for(var hx=((off%40)+40)%40-40;hx<CW+40;hx+=40){cx.moveTo(hx,CH-4);cx.lineTo(hx+16,ms.surf+ms.thick+6);}cx.stroke();
   var xa=[],xb=[];ms.m.forEach(function(m){(m.b?xb:xa).push(m.x+off);});
-  var ma=profile(xa,pal.a,64,46),mb=profile(xb,pal.b,64,46,null);
-  ms.m.forEach(function(m){cx.fillStyle=m.b?pal.b:pal.a;cx.beginPath();cx.arc(m.x+off,m.y,m.s==='sta'?3.2:2.8,0,Math.PI*2);cx.fill();if(m.s==='sta'){cx.strokeStyle=pal.sta;cx.lineWidth=1;cx.stroke();}});
-  cx.fillStyle=pal.muted;cx.font='12px Arial';
+  var ma=profile(xa,PAL.a,64,46),mb=profile(xb,PAL.b,64,46,null);
+  ms.m.forEach(function(m){cx.fillStyle=m.b?PAL.b:PAL.a;cx.beginPath();cx.arc(m.x+off,m.y,m.s==='sta'?3.2:2.8,0,Math.PI*2);cx.fill();if(m.s==='sta'){cx.strokeStyle=PAL.sta;cx.lineWidth=1;cx.stroke();}});
+  cx.fillStyle=PAL.muted;cx.font='12px Arial';
   cx.fillText('mobile phase, flowing →   (the view follows the molecules, so the column slides past to the left)',10,ms.top+16);
-  cx.fillStyle=pal.ink;cx.fillText('stationary phase',10,ms.surf+ms.thick+16);
+  cx.fillStyle=PAL.ink;cx.fillText('stationary phase',10,ms.surf+ms.thick+16);
   var K=microK(),fa=K.kA/(1+K.kA)*100,fb=K.kB/(1+K.kB)*100;
-  cx.textAlign='right';cx.fillStyle=pal.a;cx.fillText('A: stuck '+fa.toFixed(1)+'% of the time',CW-10,ms.surf+ms.thick+16);
-  cx.fillStyle=pal.b;cx.fillText('B: stuck '+fb.toFixed(1)+'% of the time',CW-10,ms.surf+ms.thick+32);cx.textAlign='left';
-  cx.fillStyle=pal.muted;cx.font='11px Arial';cx.fillText('band profiles of A and B',10,16);
+  cx.textAlign='right';cx.fillStyle=PAL.a;cx.fillText('A: stuck '+fa.toFixed(1)+'% of the time',CW-10,ms.surf+ms.thick+16);
+  cx.fillStyle=PAL.b;cx.fillText('B: stuck '+fb.toFixed(1)+'% of the time',CW-10,ms.surf+ms.thick+32);cx.textAlign='left';
+  cx.fillStyle=PAL.muted;cx.font='11px Arial';cx.fillText('band profiles of A and B',10,16);
 }
 function microCap(){
   var K=microK();
   return '<b>The mechanism.</b> Every molecule hops between the mobile phase, where it moves, and the stationary phase, where it stops (outlined). A and B hop just as often, but each time B lands in the stationary phase it stays about '+K.a.toFixed(2)+' times longer, because it interacts more strongly with it. So B spends '+(K.kB/(1+K.kB)*100).toFixed(1)+'% of its time stuck compared with '+(K.kA/(1+K.kA)*100).toFixed(1)+'% for A, and its band drifts slowly backward. At the same time, the randomness of the hops widens both bands. '+(exag()?'The difference is exaggerated ten times here (α = '+K.a.toFixed(2)+' instead of '+P.a.toFixed(3)+'). With the real α, the bands separate only after thousands of hops, which is why a real column needs so many plates.':'With the real α ('+P.a.toFixed(3)+'), the bands barely separate on this short stretch. A real column gives each molecule thousands of hops, and that is what builds up the separation you see in the chromatogram.');
 }
 
-/* main loop */
-var running=!window.matchMedia('(prefers-reduced-motion: reduce)').matches,last=0,vis3=true,visM=true,playBtn=document.getElementById('play');
-function runEnd(){return P.tB+6*P.sB;}
-function update(reset){
-  P=calc(type,VALS[type]);
-  if(reset){anim.t=0;anim.hold=0;}
-  updateText();drawCharts();clockText();
-  document.getElementById('mcap').innerHTML=microCap();
-  if(!running){render3D(0,false);microDraw();}
-}
-function loop(ts){
-  if(!running)return;
-  var dt=last?Math.min(0.05,(ts-last)/1000):0;last=ts;
-  if(!document.hidden){
-    var dur=9;
-    if(anim.hold>0){anim.hold-=dt;if(anim.hold<=0){anim.t=0;}}
-    else{anim.t+=dt*runEnd()/dur;if(anim.t>=runEnd()){anim.t=runEnd();anim.hold=2.5;}}
-    if(vis3)render3D(dt,true);
-    drawCharts();clockText();
-    if(visM){microStep(dt);microDraw();}
-  }
-  requestAnimationFrame(loop);
-}
-function setPlay(on){running=on;playBtn.textContent=on?'Pause':'Play';playBtn.setAttribute('aria-pressed',on?'false':'true');if(on){last=0;requestAnimationFrame(loop);}}
-playBtn.addEventListener('click',function(){setPlay(!running);});
-document.getElementById('again').addEventListener('click',function(){anim.t=0;anim.hold=0;if(!running){render3D(0,false);drawCharts();clockText();}});
-document.getElementById('mrestart').addEventListener('click',function(){microInit();if(!running)microDraw();});
-document.getElementById('exag').addEventListener('change',function(){microInit();document.getElementById('mcap').innerHTML=microCap();if(!running)microDraw();});
-if('IntersectionObserver' in window){new IntersectionObserver(function(es){es.forEach(function(e){vis3=e.isIntersecting;});}).observe(c3);new IntersectionObserver(function(es){es.forEach(function(e){visM=e.isIntersecting;});}).observe(cm);}
-document.querySelectorAll('button[data-type]').forEach(function(b){b.addEventListener('click',function(){
-  type=b.getAttribute('data-type');document.querySelectorAll('button[data-type]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
-  buildParams();P=calc(type,VALS[type]);buildColumn();microInit();update(true);
-});});
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){readPal();buildColumn();drawCharts();if(!running){render3D(0,false);microDraw();}});
-var ro=new ResizeObserver(function(){resize3D();sizeMicro();if(!running){render3D(0,false);microDraw();}});ro.observe(c3);ro.observe(cm);
-buildParams();P=calc(type,VALS[type]);sizeMicro();init3D();microInit();update(true);
-if(running)requestAnimationFrame(loop);else{playBtn.textContent='Play';playBtn.setAttribute('aria-pressed','true');}
+
+boot();
 })();
 </script>
 </body>
