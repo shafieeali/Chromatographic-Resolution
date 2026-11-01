@@ -195,7 +195,7 @@ function buildPanel(){
   else groups.filter(function(g){return g.id===pgroup;})[0].render(box);
   var rb=document.createElement('button');rb.type='button';rb.className='btn';rb.style.marginTop='12px';rb.textContent='Reset all to defaults';
   rb.addEventListener('click',function(){APP.reset();buildPanel();update(true);});box.appendChild(rb);
-  if(APP.S)refreshEq();if(APP.tabVals)APP.tabVals();
+  if(APP.S){APP.compute();refreshEq();}if(APP.tabVals)APP.tabVals();
 }
 function tabVal(id,txt){var a=$('pv-'+id);if(a)a.textContent=txt;var b=$('gh-'+id);if(b)b.textContent=txt;}
 function setFold(c){var r=document.querySelector('.right');r.classList.toggle('collapsed',c);var f=$('fold');f.textContent=c?'▴':'▾';f.setAttribute('aria-expanded',c?'false':'true');f.setAttribute('aria-label',c?'Show the controls':'Hide the controls to enlarge the view');}
@@ -262,7 +262,7 @@ var MOL={benzene:{n:'Benzene',d:ringWith([])},toluene:{n:'Toluene',d:ringWith([[
  mxylene:{n:'m-Xylene',d:ringWith([[0],[2]])},pxylene:{n:'p-Xylene',d:ringWith([[0],[3]])},oxylene:{n:'o-Xylene',d:ringWith([[0],[1]])},cyclohexane:{n:'Cyclohexane',d:ringWith([],false)}};
 var PAIRS={gc:[['mxylene','pxylene',1.02,4,'m- and p-xylene (nonpolar column): nearly identical boiling points'],['ethylbenzene','pxylene',1.04,4,'Ethylbenzene and p-xylene'],['cyclohexane','benzene',1.03,3,'Cyclohexane and benzene (boiling points 80.7 and 80.1 °C)'],['benzene','toluene',2.4,2,'Benzene and toluene: easy']],
  hplc:[['mxylene','pxylene',1.03,5,'m- and p-xylene on C18: hard'],['oxylene','mxylene',1.07,4,'o- and m-xylene on C18'],['toluene','ethylbenzene',1.6,3,'Toluene and ethylbenzene: one extra CH₂'],['benzene','toluene',1.9,1.5,'Benzene and toluene']]};
-function D0(t){var g=t==='gc';return {type:t,L:g?30:15,H:g?0.3:10,a:g?1.02:1.03,k:g?4:5,u:g?35:1,q:1,pair:'0'};}
+function D0(t){var g=t==='gc';return {type:t,L:g?30:15,H:g?0.3:10,a:g?1.02:1.03,k:g?4:5,u:g?35:1,q:1,pair:'0',mod:false};}
 var VALS={hplc:D0('hplc'),gc:D0('gc')},S=VALS.hplc,type='hplc',P=null,C=null,anim={t:0,hold:0};
 function compute(){var TT=TYPES[S.type],L=S.L*TT.lenScale,H=S.H*TT.hScale,N=L/H,u=S.u*TT.uScale,tM=L/u,kA=S.k,kB=S.k*S.a,tA=tM*(1+kA),tB=tM*(1+kB),rN=Math.sqrt(N),sA=tA/rN,sB=tB/rN;
   var Rs=2*(tB-tA)/(4*sA+4*sB),fe=rN/4,fs=(S.a-1)/S.a,fk=kB/(1+kB);P={L:L,H:H,N:N,u:u,tM:tM,kA:kA,kB:kB,tA:tA,tB:tB,sA:sA,sB:sB,Rs:Rs,fe:fe,fs:fs,fk:fk,Rp:fe*fs*fk,q:S.q,a:S.a};
@@ -275,19 +275,20 @@ function fmtL(m){var t=TYPES[S.type];return sig(m/t.lenScale,3)+' '+t.lenUnit;}
 function fmtHH(m){var t=TYPES[S.type];return sig(m/t.hScale,3)+' '+t.hUnit;}
 function tUnit(){return P.tB>180?60:1;}
 function stat(){var r=Math.round(P.Rs*100)/100;return r<1?['Overlapping','var(--alert)']:(r<1.5?['Partly resolved','var(--warn)']:['Baseline resolved','var(--good)']);}
-APP.live=function(){var s=stat();$('live').innerHTML='<div class="l1"><span class="h">Rs = '+P.Rs.toFixed(2)+'</span><span class="sub">'+names().join(' / ')+'</span><span class="st" style="color:'+s[1]+'">'+s[0]+'</span></div>'
+APP.live=function(){var s=stat();$('live').innerHTML='<div class="l1"><span class="h">Rs = '+P.Rs.toFixed(2)+'</span><span class="sub">'+names().join(' / ')+(S.mod?' (conditions changed)':'')+'</span><span class="st" style="color:'+s[1]+'">'+s[0]+'</span></div>'
   +'<div class="l2"><span>Rs ≈ √N/4 × (α−1)/α × k<sub>B</sub>/(1+k<sub>B</sub>) = '+P.fe.toFixed(1)+' × '+P.fs.toFixed(4)+' × '+P.fk.toFixed(3)+' = '+P.Rp.toFixed(2)+'</span><span>run ≈ '+fmtT(P.tB+3*P.sB)+'</span></div>';};
 APP.tabVals=function(){tabVal('N','N '+Math.round(P.N/1000)+'k');tabVal('S','α '+S.a.toFixed(3));tabVal('K','k '+sig(P.kB,2));tabVal('F','u '+S.u);};
-function sl(b,id,label,unitf,log,eq,fmt){var r=TYPES[S.type].r[id];return ctlSlider(b,{id:id,label:label,min:r[0],max:r[1],step:r[2]||0.01,log:log,get:function(){return S[id];},set:function(v){S[id]=v;if(id==='a'||id==='k')S.pair='c';},fmt:fmt||function(v){return sig(v,3)+(unitf?' '+unitf():'');},eq:eq});}
+function sl(b,id,label,unitf,log,eq,fmt){var r=TYPES[S.type].r[id];return ctlSlider(b,{id:id,label:label,min:r[0],max:r[1],step:r[2]||0.01,log:log,get:function(){return S[id];},set:function(v){S[id]=v;if((id==='a'||id==='k')&&S.pair!=='c')S.mod=true;},fmt:fmt||function(v){return sig(v,3)+(unitf?' '+unitf():'');},eq:eq});}
 APP.groups=function(){var TT=TYPES[S.type];return [
  {id:'N',tab:'Efficiency',title:'Efficiency, N',render:function(b){
    sl(b,'L','Column length, L',function(){return TT.lenUnit;},false,function(){return 'N = '+R_('L')+'/H &nbsp; R<sub>s</sub> ∝ √N ∝ √'+R_('L')+'<br>'+N_('N = '+fmtL(P.L)+' / '+fmtHH(P.H)+' = '+Math.round(P.N).toLocaleString('en-US')+'; √N/4 = '+P.fe.toFixed(1));});
    sl(b,'H','Plate height, H',function(){return TT.hUnit;},true,function(){return 'N = L/'+R_('H')+N_('  (smaller H: smaller particles, better packing, optimum flow; see the Van Deemter explorer)');});
    ctlNote(b,'Doubling the column length doubles N but raises R<sub>s</sub> only by √2 = 1.41, and doubles the run time.');}},
  {id:'S',tab:'Selectivity',title:'Selectivity, α',render:function(b){
-   ctlSelect(b,{id:'pair',label:'Compound pair (typical values)',options:PAIRS[S.type].map(function(p,i){return [String(i),p[4]];}).concat([['c','Your own A and B (set α and k)']]),get:function(){return S.pair;},set:function(v){S.pair=v;var p=pairOf();if(p){S.a=p[2];S.k=p[3];}},rebuild:true});
+   ctlSelect(b,{id:'pair',label:'Compound pair (typical values)',options:PAIRS[S.type].map(function(p,i){return [String(i),p[4]];}).concat([['c','Your own A and B (set α and k)']]),get:function(){return S.pair;},set:function(v){S.pair=v;S.mod=false;var p=pairOf();if(p){S.a=p[2];S.k=p[3];}},rebuild:true});
    var p=pairOf();if(p){var d=document.createElement('div');d.className='row';d.innerHTML='<div style="display:flex;gap:16px;align-items:flex-end">'+[0,1].map(function(i){return '<div style="text-align:center;color:var(--'+(i?'b':'a')+');font-size:.8rem">'+molInline(MOL[p[i]].d,false,10,'var(--'+(i?'b':'a')+')')+'<br><b>'+MOL[p[i]].n+'</b></div>';}).join('')+'</div>';b.appendChild(d);}
    sl(b,'a','Selectivity, α = k<sub>B</sub>/k<sub>A</sub>',null,false,function(){return '('+R_('α')+' − 1)/'+R_('α')+' = '+N_('('+S.a.toFixed(3)+' − 1)/'+S.a.toFixed(3)+' = '+P.fs.toFixed(4))+'<br>k<sub>B</sub> = '+R_('α')+'·k<sub>A</sub>'+N_(' = '+S.a.toFixed(3)+' × '+sig(S.k,3)+' = '+sig(P.kB,3));},function(v){return v.toFixed(3);});
+   if(S.mod&&p)ctlNote(b,'α or k now differs from the typical values for this pair ('+p[2]+' and '+p[3]+'), as it would with a different stationary phase, mobile phase or temperature. Choose the pair again to reset.','info');
    ctlNote(b,'α reflects how differently the two compounds interact with the stationary phase. Change it with a different stationary phase, mobile phase composition (HPLC) or temperature.');}},
  {id:'K',tab:'Retention',title:'Retention, k',render:function(b){
    sl(b,'k','Retention factor of A, k<sub>A</sub>',null,true,function(){return 'k<sub>B</sub>/(1 + k<sub>B</sub>), k<sub>B</sub> = α·'+R_('k<sub>A</sub>')+'<br>'+N_('= '+sig(P.kB,3)+'/(1 + '+sig(P.kB,3)+') = '+P.fk.toFixed(3)+'; t<sub>R</sub> = t<sub>M</sub>(1 + k)');});
@@ -307,7 +308,7 @@ function drawChrom(){var svg=$('chsv');if(!$('v-chrom').classList.contains('on')
   var d='';for(var i=0;i<=500;i++){var t=T1*i/500,y=gN(t,P.tA,P.sA)+P.q*gN(t,P.tB,P.sB);d+=(d?'L':'M')+Xo(t).toFixed(1)+' '+(ob-Math.min(1,y/hmax)*(ob-8)).toFixed(1);}svg.appendChild(el('path',{d:d,fill:'none',stroke:'var(--navy)','stroke-width':1.4}));
   svg.appendChild(el('line',{x1:Xo(P.tM),y1:ob-10,x2:Xo(P.tM),y2:ob,stroke:'var(--muted)'}));svg.appendChild(el('text',{x:Xo(P.tM)+3,y:ob-2,'font-size':10,fill:'var(--muted)'},'t'+String.fromCharCode(8344)));
   svg.appendChild(el('text',{x:PL,y:OH-1,'font-size':10,fill:'var(--muted)'},'whole run, 0–'+sig(T1/tu,3)+' '+un+'; boxed part enlarged below'));
-  var p=pairOf(),cardH=p?(W<480?62:84):22,ZT=OH+10+cardH,ZB=36;function X(t){return PL+(t-z0)/(z1-z0)*(W-PL-PR);}
+  var p=pairOf(),cardH=p?(W<480?54:74):22,ZT=OH+10+cardH,ZB=36;function X(t){return PL+(t-z0)/(z1-z0)*(W-PL-PR);}
   var m=700,ts=[],ya=[],yb=[],ys=[];for(i=0;i<=m;i++){var t2=z0+(z1-z0)*i/m;ts.push(t2);var a=gN(t2,P.tA,P.sA),b2=P.q*gN(t2,P.tB,P.sB);ya.push(a);yb.push(b2);ys.push(a+b2);}
   var top=Math.max.apply(null,ys)*1.06;function Y(v){return H-ZB-v/top*(H-ZT-ZB);}
   var st=niceStep((z1-z0)/tu,W<420?4:6),dec=Math.max(0,-Math.floor(Math.log10(st)+1e-9));for(var tt=Math.ceil(z0/tu/st)*st;tt<=z1/tu+1e-9;tt+=st){svg.appendChild(el('line',{x1:X(tt*tu),y1:ZT,x2:X(tt*tu),y2:H-ZB,'class':'gl'}));svg.appendChild(el('text',{x:X(tt*tu),y:H-ZB+15,'text-anchor':'middle','class':'tk'},tt.toFixed(dec)));}
@@ -316,16 +317,18 @@ function drawChrom(){var svg=$('chsv');if(!$('v-chrom').classList.contains('on')
   svg.appendChild(el('path',{d:path(ya),fill:'none',stroke:'var(--a)','stroke-width':1.5,'stroke-dasharray':'6 4'}));svg.appendChild(el('path',{d:path(yb),fill:'none',stroke:'var(--b)','stroke-width':1.5,'stroke-dasharray':'6 4'}));svg.appendChild(el('path',{d:path(ys),fill:'none',stroke:'var(--navy)','stroke-width':2.6}));
   [[P.tA,P.sA,'var(--a)',ZB-22],[P.tB,P.sB,'var(--b)',ZB-14]].forEach(function(w){var y=H-w[3];svg.appendChild(el('line',{x1:Math.max(PL,X(w[0]-2*w[1])),y1:y,x2:Math.min(W-PR,X(w[0]+2*w[1])),y2:y,stroke:w[2],'stroke-width':2}));});
   var nm=names();[[P.tA,0,'var(--a)'],[P.tB,1,'var(--b)']].forEach(function(q,i){var x=X(q[0]),idx=Math.round((q[0]-z0)/(z1-z0)*m),yt=Y(ys[idx]),cxp=clamp(x+(i?28:-28),40,W-40);
-    if(p){var mm=molSVG(MOL[p[i]].d,false,W<480?8.5:11,q[2]),sc=Math.min(1,(cardH-16)/mm.h),g=el('g',{transform:'translate('+(cxp-mm.w*sc/2).toFixed(1)+','+(OH+8).toFixed(1)+') scale('+sc.toFixed(3)+')'});g.innerHTML=mm.svg;svg.appendChild(g);}
+    if(p){var mm=molSVG(MOL[p[i]].d,false,W<480?7:9,q[2]),sc=Math.min(1,(cardH-16)/mm.h),g=el('g',{transform:'translate('+(cxp-mm.w*sc/2).toFixed(1)+','+(OH+8).toFixed(1)+') scale('+sc.toFixed(3)+')'});g.innerHTML=mm.svg;svg.appendChild(g);}
     svg.appendChild(el('text',{x:cxp,y:OH+6+cardH,'text-anchor':'middle','font-size':11,'font-weight':'bold',fill:q[2],'class':'halo'},nm[i]+', '+sig(q[0]/tu,4)+' '+un));
     svg.appendChild(el('line',{x1:cxp,y1:OH+10+cardH,x2:x,y2:Math.max(yt-3,ZT+2),stroke:q[2],'stroke-dasharray':'2 2'}));});
+  if((P.q<0.35||P.q>2.9)&&(P.valley==null||P.valley>40)){var small=P.q<1?[P.tB,1]:[P.tA,0],xs2=X(small[0]),iy=Math.round((small[0]-z0)/(z1-z0)*m),ys2=Y(ys[iy]);
+    svg.appendChild(el('text',{x:clamp(xs2,90,W-90),y:Math.min(H-ZB-8,ys2+30),'text-anchor':'middle','font-size':11.5,'font-weight':'bold',fill:'var(--eqr)','class':'halo'},'↑ '+nm[small[1]]+' hides as a shoulder'));}
 }
 function drawImprove(){if(!$('v-imp').classList.contains('on'))return;var box=$('impb'),rN=Math.sqrt(P.N),R=1.504,kA=P.kA,a=P.a,TT=TYPES[S.type],r=TT.r,low=Math.round(P.Rs*100)/100<1.5;
   var Nreq=P.N*Math.pow(R/P.Rs,2),Lreq=Nreq*P.H,Hreq=P.L/Nreq,aReq=(2*R+R*kA+(rN/2)*kA)/(kA*(rN/2-R)),den=(rN/2)*(a-1)-R*(1+a),kReq=den>0?2*R/den:Infinity;
   var cards=[{t:'Efficiency: √N/4 = '+P.fe.toFixed(1),c:'var(--c0)',g:clamp(P.fe/120,0,1),x:'R<sub>s</sub> grows only as √N. To reach 1.5 you need N = '+Math.round(Nreq).toLocaleString('en-US')+'.',
      o:[['Longer column: L = '+fmtL(Lreq),'Run gets '+sig(Lreq/P.L,3)+'× longer.',Lreq/TT.lenScale<=r.L[1],function(){S.L=Lreq/TT.lenScale;}],['More efficient column: H = '+fmtHH(Hreq),'Same run time; smaller particles (HPLC) or a narrower column (GC).',Hreq/TT.hScale>=r.H[0],function(){S.H=Hreq/TT.hScale;}]]},
-    {t:'Selectivity: (α−1)/α = '+P.fs.toFixed(4),c:'var(--c3)',g:clamp(P.fs/0.2,0,1),x:'The most powerful factor when α is close to 1.',o:[[aReq>1?'Raise α to '+aReq.toFixed(3):'Not possible at this N and k','No extra time; needs different chemistry (stationary phase, mobile phase, temperature).',aReq>1&&aReq<=r.a[1],function(){S.a=aReq;S.pair='c';}]]},
-    {t:'Retention: k/(1+k) = '+P.fk.toFixed(3),c:'var(--c4)',g:clamp(P.fk,0,1),x:'Helps while k is small; k/(1+k) can never exceed 1.',o:[[isFinite(kReq)?'Raise k<sub>A</sub> to '+sig(kReq,3):'Not possible: even huge k can’t reach 1.5',isFinite(kReq)?'Run gets '+sig((1+a*kReq)/(1+P.kB),3)+'× longer.':'Improve N or α instead.',isFinite(kReq)&&kReq<=r.k[1],function(){S.k=kReq;S.pair='c';}]]}];
+    {t:'Selectivity: (α−1)/α = '+P.fs.toFixed(4),c:'var(--c3)',g:clamp(P.fs/0.2,0,1),x:'The most powerful factor when α is close to 1.',o:[[aReq>1?'Raise α to '+aReq.toFixed(3):'Not possible at this N and k','No extra time; needs different chemistry (stationary phase, mobile phase, temperature).',aReq>1&&aReq<=r.a[1],function(){S.a=aReq;if(S.pair!=='c')S.mod=true;}]]},
+    {t:'Retention: k/(1+k) = '+P.fk.toFixed(3),c:'var(--c4)',g:clamp(P.fk,0,1),x:'Helps while k is small; k/(1+k) can never exceed 1.',o:[[isFinite(kReq)?'Raise k<sub>A</sub> to '+sig(kReq,3):'Not possible: even huge k can’t reach 1.5',isFinite(kReq)?'Run gets '+sig((1+a*kReq)/(1+P.kB),3)+'× longer.':'Improve N or α instead.',isFinite(kReq)&&kReq<=r.k[1],function(){S.k=kReq;if(S.pair!=='c')S.mod=true;}]]}];
   box.innerHTML='';cards.forEach(function(c){var d=document.createElement('div');d.className='card';d.innerHTML='<h3 style="color:'+c.c+'">'+c.t+'</h3><div class="gauge"><span style="width:'+(c.g*100).toFixed(0)+'%;background:'+c.c+'"></span></div><p>'+c.x+'</p>';
     if(!low){d.innerHTML+='<p class="cost">Already baseline resolved. Make it harder (for example, lower α) to see how this factor helps.</p>';}
     else c.o.forEach(function(o){var p=document.createElement('p');p.innerHTML='<b>'+o[0]+'</b><br><span class="cost">'+o[1]+'</span>';d.appendChild(p);var bt=document.createElement('button');bt.type='button';bt.className='btn';bt.textContent='Try it';if(!o[2]){bt.disabled=true;bt.title='Outside this page’s slider range';}bt.onclick=function(){o[3]();compute();buildPanel();update(true);};d.appendChild(bt);});
